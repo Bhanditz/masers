@@ -1,7 +1,5 @@
 # Masers
-This repository includes files (primarily code and data tables) used in research leading to the AAS presentation: _A Statistical Investigation of the Connection between X-ray and Water Maser Emission in Galaxy Centers_. The abstract for this presentation is available at Harvard's SAO/NASA ADS database: http://adsabs.harvard.edu/abs/2014AAS...22325109N
-
-I am making my work available in order to assist my former research group and promote scientific progress.
+This repository includes files (primarily code and data tables) used in research leading to the AAS presentation: _A Statistical Investigation of the Connection between X-ray and Water Maser Emission in Galaxy Centers_. The abstract for this presentation is available at Harvard's SAO/NASA ADS database: http://adsabs.harvard.edu/abs/2014AAS...22325109N/. I am making my work available in order to assist my former research group and promote scientific progress.
 
 ## Organization
 These are my personal files in exactly the condition I had them during my undergraduate research. There is a lot of redundancy, and files may be named confusingly because it was my personal work in progress containing many drafts and slightly varied iterations of certain concepts and data sets. There is a lot of work here that has not been perfected because it was a quick solution for a specific task. If I were to return to this research now as a better coder, I would make a lot of changes. I'll leave that to you.
