@@ -14,4 +14,4 @@ You will find several files with ".t" or ".tt" file extensions. These are essent
 * Determining X-ray luminosities of large tables of data based on flux and luminosity distance.
 * Comparing X-ray fluxes and luminosities between maser and non-maser groups at various energies.
 * Simulating column density using PIMMS. Code that automatically generates PIMMS scripts to analyze large data sets.
-* Monte carlo simulations of obscured X-ray luminosities at various energies for maser and non-maser groups.
+* Monte carlo simulations of obscured X-ray luminosities at various energies for maser and non-maser groups based on fits to actual data.
