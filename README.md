@@ -1,5 +1,5 @@
 # Masers
-This repository includes files used in research leading to the AAS presentation: _A Statistical Investigation of the Connection between X-ray and Water Maser Emission in Galaxy Centers_. The abstract for this presentation is available at Harvard's SAO/NASA ADS database: http://adsabs.harvard.edu/abs/2014AAS...22325109N
+This repository includes files (primarily code and data tables) used in research leading to the AAS presentation: _A Statistical Investigation of the Connection between X-ray and Water Maser Emission in Galaxy Centers_. The abstract for this presentation is available at Harvard's SAO/NASA ADS database: http://adsabs.harvard.edu/abs/2014AAS...22325109N
 
 I am making my work available in order to assist my former research group and promote scientific progress.
 
