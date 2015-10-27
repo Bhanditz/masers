@@ -1,0 +1,4 @@
+awk -f upperlimit.awk 210-m-intrinsic.dat > new-210-m-intrinsic.dat
+awk -f upperlimit.awk int-m-intrinsic.dat > new-int-m-intrinsic.dat
+awk -f upperlimit.awk rass-m-intrinsic.dat > new-rass-m-intrinsic.dat
+awk -f upperlimit.awk swift-m-intrinsic.dat > new-swift-m-intrinsic.dat

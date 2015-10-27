@@ -1,0 +1,1 @@
+$3 ~ /Weighted/{print $7}

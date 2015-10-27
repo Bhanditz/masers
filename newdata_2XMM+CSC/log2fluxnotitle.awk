@@ -1,0 +1,1 @@
+$3 ~ "predicts"{ print $10 }

@@ -1,0 +1,8 @@
+log rename
+from rosat pspc open
+inst flux ergs 0.1-2
+[loop start]
+mo po 2.3 [nh]
+go [count]
+[loop end]
+exit

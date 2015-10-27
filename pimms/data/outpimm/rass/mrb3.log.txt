@@ -1,0 +1,81 @@
+! PIMMS > from rosat pspc open
+! PIMMS > inst flux ergs 0.1-2
+! PIMMS > mo po 2.3 1.42E+20
+! PIMMS > go 0.298
+* For power law model with photon index = 2.3000; NH =  1.420E+20
+  and  2.980E-01 cps in ROSAT PSPC OPEN
+  (Internal model normalization =  5.940E-04)
+* PIMMS predicts a flux (      0.100-      2.000keV) of  2.153E-12 ergs/cm/cm/s
+! PIMMS > mo po 2.3 2.92E+20
+! PIMMS > go 1.78
+* For power law model with photon index = 2.3000; NH =  2.920E+20
+  and  1.780E+00 cps in ROSAT PSPC OPEN
+  (Internal model normalization =  5.719E-03)
+* PIMMS predicts a flux (      0.100-      2.000keV) of  1.696E-11 ergs/cm/cm/s
+! PIMMS > mo po 2.3 1.84E+21
+! PIMMS > go 0.0602
+* For power law model with photon index = 2.3000; NH =  1.840E+21
+  and  6.020E-02 cps in ROSAT PSPC OPEN
+  (Internal model normalization =  5.055E-04)
+* PIMMS predicts a flux (      0.100-      2.000keV) of  7.025E-13 ergs/cm/cm/s
+! PIMMS > mo po 2.3 9.67E+20
+! PIMMS > go 0.0559
+* For power law model with photon index = 2.3000; NH =  9.670E+20
+  and  5.590E-02 cps in ROSAT PSPC OPEN
+  (Internal model normalization =  3.519E-04)
+* PIMMS predicts a flux (      0.100-      2.000keV) of  6.742E-13 ergs/cm/cm/s
+! PIMMS > mo po 2.3 5.04E+20
+! PIMMS > go 0.897
+* For power law model with photon index = 2.3000; NH =  5.040E+20
+  and  8.970E-01 cps in ROSAT PSPC OPEN
+  (Internal model normalization =  4.089E-03)
+* PIMMS predicts a flux (      0.100-      2.000keV) of  1.014E-11 ergs/cm/cm/s
+! PIMMS > mo po 2.3 9.01E+19
+! PIMMS > go 0.109
+* For power law model with photon index = 2.3000; NH =  9.010E+19
+  and  1.090E-01 cps in ROSAT PSPC OPEN
+  (Internal model normalization =  1.682E-04)
+* PIMMS predicts a flux (      0.100-      2.000keV) of  6.819E-13 ergs/cm/cm/s
+! PIMMS > mo po 2.3 9.91E+20
+! PIMMS > go 1.37
+* For power law model with photon index = 2.3000; NH =  9.910E+20
+  and  1.370E+00 cps in ROSAT PSPC OPEN
+  (Internal model normalization =  8.716E-03)
+* PIMMS predicts a flux (      0.100-      2.000keV) of  1.652E-11 ergs/cm/cm/s
+! PIMMS > mo po 2.3 1.15E+20
+! PIMMS > go 3.92
+* For power law model with photon index = 2.3000; NH =  1.150E+20
+  and  3.920E+00 cps in ROSAT PSPC OPEN
+  (Internal model normalization =  6.897E-03)
+* PIMMS predicts a flux (      0.100-      2.000keV) of  2.637E-11 ergs/cm/cm/s
+! PIMMS > mo po 2.3 1.78E+20
+! PIMMS > go 4.71
+* For power law model with photon index = 2.3000; NH =  1.780E+20
+  and  4.710E+00 cps in ROSAT PSPC OPEN
+  (Internal model normalization =  1.084E-02)
+* PIMMS predicts a flux (      0.100-      2.000keV) of  3.701E-11 ergs/cm/cm/s
+! PIMMS > mo po 2.3 1.38E+21
+! PIMMS > go 0.0845
+* For power law model with photon index = 2.3000; NH =  1.380E+21
+  and  8.450E-02 cps in ROSAT PSPC OPEN
+  (Internal model normalization =  6.196E-04)
+* PIMMS predicts a flux (      0.100-      2.000keV) of  1.004E-12 ergs/cm/cm/s
+! PIMMS > mo po 2.3 1.81E+20
+! PIMMS > go 0.131
+* For power law model with photon index = 2.3000; NH =  1.810E+20
+  and  1.310E-01 cps in ROSAT PSPC OPEN
+  (Internal model normalization =  3.047E-04)
+* PIMMS predicts a flux (      0.100-      2.000keV) of  1.036E-12 ergs/cm/cm/s
+! PIMMS > mo po 2.3 4.08E+20
+! PIMMS > go 0.106
+* For power law model with photon index = 2.3000; NH =  4.080E+20
+  and  1.060E-01 cps in ROSAT PSPC OPEN
+  (Internal model normalization =  4.249E-04)
+* PIMMS predicts a flux (      0.100-      2.000keV) of  1.133E-12 ergs/cm/cm/s
+! PIMMS > mo po 2.3 4.87E+20
+! PIMMS > go 0.0856
+* For power law model with photon index = 2.3000; NH =  4.870E+20
+  and  8.560E-02 cps in ROSAT PSPC OPEN
+  (Internal model normalization =  3.825E-04)
+* PIMMS predicts a flux (      0.100-      2.000keV) of  9.601E-13 ergs/cm/cm/s
+! PIMMS > exit

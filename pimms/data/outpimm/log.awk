@@ -1,0 +1,1 @@
+{print log($0)/log(10)}

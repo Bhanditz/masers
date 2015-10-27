@@ -1,0 +1,49 @@
++ pull-mcp.sh - gets mcp lists (masers and all surveyed (using scdupes.awk)) into csv format from website > mcp.csv and all-mcp.csv > sdss as AllSurveyed2015 and OnlyMasers2015
+
++ Crossmatch OnlyMasers2015 against Masers2013 to get maser numbers as oldnum > Masers2015
+	select
+		a.num as oldnum, b.num, b.name, b.ra, b.dec, b.vsys
+	from
+		Masers2013 a, Masers2015 b
+	where
+		a.name = b.name
+	UNION
+	select
+		null as oldnum, num, name, ra, dec, vsys
+	from
+		Masers2015
+	where
+		name NOT IN (SELECT name FROM Masers2013)
+	order by
+		num
+
++ Crossmatch AllSurveyed2015 against Masers2015 to filter out masers, in progress... this query is arbitrary but comes up with 3884 which is exactly minus 162
+	select
+	  name, ra, dec, vsys
+	from
+	  AllSurveyed2015
+	where
+	  name NOT IN (SELECT name FROM Masers2013)
+	EXCEPT
+	select
+	  p.name, p.ra, p.dec, p.vsys
+	from
+	  AllSurveyed2015 p, Masers2015 m
+	where
+	  ((m.ra-p.ra)*cos(m.dec))*((m.ra-p.ra)*cos(m.dec)) + (p.dec-m.dec)*(p.dec-m.dec) < 0.000033
+
++ Improve pull-mcp.sh AllSurveyed function
+	test with $ sudo cp pull-mcp.sh /usr/local/bin/pull-mcp && pull-mcp test.csv -n -c 0
+
++ Query radius: test at 6' and 10" -- this was previous method, compare discrepancies and decide on each individually.
+
++ thesis-publ-withTypoFixes-Druckversion.pdf suggests automated NED queries
+  http://adsabs.harvard.edu/abs/2007ASPC..376..153M ... 2007ASPC__376__153M.pdf ... more details
+  NED batch query https://ned.ipac.caltech.edu/help/batch.html
+
+== DO ==
++ Improve filtering of duplicates and masers from all-surveyed
++ NED query by name, coordinates, vsys? 
++ Run through crossmatches against each catalog
++ Compare name filter with separation filter
++ better separation than declination only

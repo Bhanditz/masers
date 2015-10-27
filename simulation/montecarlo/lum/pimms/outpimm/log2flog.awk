@@ -1,0 +1,1 @@
+$3 ~ "predicts"{ print log($11)/log(10) + 42}

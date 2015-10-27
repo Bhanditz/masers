@@ -1,0 +1,1 @@
+$1 !~ "name"{print log($6)/log(10)}

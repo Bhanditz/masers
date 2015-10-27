@@ -1,0 +1,1648 @@
+Week 1
+== 5/13-5/17 ==
+tasks.txt
+read chapters 1, 19, 20 in The Cosmic Perspective
+       notes in notebook
+
+/su13/masers/
++Fix sp13/maserlist2012/maserlist2012.csv manually entering negative
+value for all -00 declination values. Some were already correct??
+replace maserlist2012 with new maserlist--don't use this list
++Edit awk code that led to this list and title /su13/masers/maserlist2012.txt
+Use this list to filter maserlist2012.txt now also in this directory
+to get an entirely new and finally correct finalmaserlist.csv
+Replace mydb version with this version.
++Maserlist code /su13/maser/crossmatch.sql >> xmatch8 should be 46
+V8: range = 0.000008, radius = 10.18"
+xmatch8 is query results, dupefilt.awk filters duplicates,
+xmatchfilt.csv is output from dupefilt applied to xmatch8
+
+/su13/mctrl/
+Raw data list for all maser/non-maser control: masercontrol.txt
+Filter into db friendly /incompletefilters/
+       long.awk = all info 4,474
+       longcrop.awk = all data for 4 columns
+       short.awk = all info for non-repeat (first choice only)
+       shortcrop.awk = 4 columns for non-repeat 3,617
+Output shortcrop.csv becomes mctrl in mydb
+
+
+Week 2
+== 5/20 - 5/24 ==
++Filter control by all duplicates: /su13/mctrl/scdupes.awk 3,484 results
+mctrl in mydb
++remove masers from control /su13/mctrl/rmvmas.sql
+	V1 = every single 151*3,617=546k results
+	V2 = crossmatch by name, only 88 results
+	V3 = crossmatch via xmatch8 method; 96 results
+	V4 = V3 results that aren't V2; 40 results
+	V5 = all crossmatch for position OR name; 128 results allposname
+	V6 = filter out 128 result allposname, get mctrlfilt db
++Spectroscopic cross-match mctrlfilt against DR9 using /su13/mctrl/mcfxmatch.sql
+  	V1.0 = mcfxs1-0
++Photometric cross-matching /su13/mctrl/mcfxmatch.sql
+	probPSF: 0 = galaxy, 1 = star
+	type: 3 = galaxy, 6 = star
+	V2.0 = mcfxp2-0
++Photometcric cross-match masers /su13/maser/crossmatch.sql
+	V9.0 = maserxp9-0
++TOPCAT http://www.star.bris.ac.uk/~mbt/topcat/#install
+	notes in /su13/topcat/doc
++All three crossmatch queries have failed: Dash illegal
++Re-run each crossmatch with new table name
+	V9.0 = maserxp9v0 too long
+	V2.0 = mcfxp2v0 too long
+  select
+m.name mname, m.ra mra, m.dec mdec, m.velo, s.specObjID, s.ra sra, s.dec sdec, s.z, s.class, s.subclass
+from
+MyDB..Control m, SpecObjAll s
+where
+(class = 'galaxy' or class = 'qso')
+and ((m.ra-s.ra)*cos(m.dec))*((m.ra-s.ra)*cos(m.dec)) + (s.dec-m.dec)*(s.dec-m.dec) < 0.000008
++TOPCAT http://www.star.bris.ac.uk/~mbt/topcat/sun253/sun253.html
+	notes in /su13/topcat/doc.t
++X-Ray telescope/surveys/catalogs below notes in /su13/xrt.t
+       THE CHANDRA SOURCE CATALOG http://iopscience.iop.org/0067-0049/189/1/37/
+       INTEGRAL: International Gamma-Ray Astrophysics Laboratory
+       ROSAT-WGACAT http://heasarc.gsfc.nasa.gov/wgacat/
+
+Week 3
+== 5/28 ==
+mctrlfilt.csv imported to /su13/mctrl/
+mcfsp.asc is converted from above file to switch commas with spaces using comma2space.awk
+      also hash column titles; compatible with topcat?
+
+== 5/29 ==
++Fix maser control list: /mctrl/incompletefilters/longcrop.awk into longcrop.csv > longcrop
+   xmatch with maserlist2012 > longxmatch > /mctrl/longxmatch/
+      using /mctrl/rmvmas.sql filter with /mctrl/longmatch/lxdupe.awk
+      	 lxdupe filters according to masers
+         V7 > longxmatch: 10" 782 results filter to 119 unique maserlist results
+         V8 > bigtest: 6' 807 results filter to 121
+         V9 > hugetest: 10 deg 21,399 results filter to 141
+            Some of these are the same maser hitting for multiple control galaxies so <141
+      Not all masers are in control. Find best radius mctrl/longmatch/lxdupe2
+         V10 > margin: Compare 10" to 6' to interpret what each of the new 25 galaxies are
+	 RESULTS:
+Name		RA	DEC	Velo  Treatment
+*005420-233309	13.5854	-23.5525 9680 Keep, unique from NGC235A
+0437170		69.3208	66.6283	3770  Exclude, J0437+6637 duplicate
+0508212		77.0883	17.3689	5049  Ambiguous so exclude because 19.9">10"
+0719308+5921184	109.879	59.3551	3258  Exclude, UGC3789 duplicate
+*091958+264455	139.992	26.7485	7898  Keep, unique from IC485
+*120210+351355	180.543	35.2319	10077 Keep, Unique from J1202+3519
+*2MASXJ11092911+2841293 167.371	28.6914	9847  Keep, Unique from J1103-0052
+*IC486		120.088	26.6135	8062  Keep, unique from IC485
+IC694		172.072	58.5507	3064  Exclude, they are arp299
+NGC3690A	172.081	58.5371	3064  Exclude, they are arp299
+NGC3690B	172.102	58.534	3064  Exclude, they are arp299
+NGC4151half	182.598	39.3804	995   Exclude, NGC4151 dupe see 995
+*NGC4156	182.707	39.4728	6755  Keep, unique from NGC4151
+NGC4258N	184.733	47.3082	466   Exclude, NGC4258 duplicates
+NGC4258NN	184.731	47.3109	466   Exclude, NGC4258 duplicates
+NGC4258NNN	184.731	47.3137	466   Exclude, NGC4258 duplicates
+NGC4922B	195.316	29.3061	7056  Exclude, NGC4922/130125+291849 dupe (see 7056 in mlist)
+NGC520a		21.1437	3.79497	2266  Exclude, 520 duplicates
+NGC520b		21.145	3.78969	2266  Exclude, 520 duplicates
+NGC520m1	21.1451	3.78408	2266  Exclude, 520 duplicates
+NGC520m2	21.145	3.79525	2266  Exclude, 520 duplicates
+NGC520m3	21.1395	3.78972	2266  Exclude, 520 duplicates
+NGC520m4	21.1505	3.78975	2266  Exclude, 520 duplicates
+*NGC5256A	204.587	48.242	8211  Keep, unique from NGC5256
+*notMrk78	115.674	65.1436	11137 Keep, unique from Mrk78
+   Keep exclusions in list and remove "keep" from bigtest > controlfilter
+   /mctrl/controlfilter.csv has all maser matches (799 items, 120 maser matches)
+   Remove all items in controlfilter from mctrl > masercontrol
+      This now has 3,342 instead of mctrlfilt which has 3,357. This has fewer because matches were looked for in the original list to avoid name mismatches with maser vs dupe filtered mctrl. Also, new maser matches listed above were found outside 10" and excluded from the big list.
++Crossmatch masercontrol with spectroscopy /mctrl/mcfxmatch.sql
+   V1.1 = mcfxs1v1
+
+== 5/30 ==
+Begin writeup /su13/LaTeX/notes/
+   discuss methods to establish control
+
+== 5/31 ==
++masercontrol from sdss into /su13/mctrl/masercontrol.csv
++/su13/topcat contains all tables listed
++Crossmatch against Integral 20"
+   masers_intibisass20.fits = 5
+   control_intibisass20.fits = 14
+
++Crossmatch against Chandra 3"
+   0 = champhxagn, chanulxcat, galcencxo, ecdfscxo, clans, cyder, cygob2cxo, chandfs2ms
+
++Crossmatch against RASS/BSC+FSC ROSAT All-Sky Survey: Bright Sources + Faint Sources 20"
+   masers_rass-bsc20.fits = 12
+   masers_rass-fsc20.fits = 8
+   control_rass-bsc20.fits = 147
+   control_rass-fsc20.fits = 60
+
++Crossmatch against XMM 10"
+   masers_2xmm10.fits = 47-best matches (100 all matches with duplicates)
+   control_2xmm10.fits = 231-best matches (345 all matches with duplicates)
+   masers_ix-41 = 52
+   control_ix-41 = 
+   
++comma2tab.awk converts csv to tsv and comma2space converts csv to ascii
+   use comma2tab to convert /masers/maserlist2012.csv  into /CSCmasers.tsv and /mctrl/masercontrol.csv into /CSC/control.tsv
+
+
+
+Week 4
+== 6/3 ==
++Fix maserlist
+   36 UGC 47356.2
+   44 VIIZw 1096.62
+   106 NGC 76158.3
+   124 NGC 86478.7
++One duplicate was removed by hand from Control. Wasn't filtered because name/coordinates interacted in awk code.
++/mctrl/rmvmas.sql
+   V12 re-xmatch Masers vs longcrop = 796 > newlittle
+   V13 filter out newlittle from old masercontrol reduces by 2 > 3,340
++Finalized Control and Masers tables
++Redo maserlist2012.asc using comma2space.awk same version works
++Reload control.csv and convert to control.asc using comma2space.awk.
++Re-crossmatch
+   Masers vs specobjall: MasersSpec (/su13/masers/crossmatch.sql V8.1)
+      Same 58 results so remove and rename xmatchfilt into MaserSpecDR9 instead
+      of refiltering the same list.
+   Control vs specobjall: ControlSpec (/su13/mctrl/.sql V)
+   Re-run all topcat matches and put into /topcat/tables. Make sure not to include duplicates, used "best matches" not all.
++Form list used to make chart (bumped down to next days notes)
+
+== 6/4 ==
++Complete RASS crossmatching for 10" and 30"
++CSC Crossmatch. Save .tsv file for initial query results in /su13/CSC/ then send to topcat and have topcat filter out best matches and save into /su13/topcat/CSC
++Add information about CSC ACIS, HRC, w, b etc to xrt.t
+XMM
+   masers_2xmm10.fits = 47
+   control_2xmm10.fits = 231
+   masers_ix41-10.fits = 52
+   control_ix41-10.fits = 294
+RASS
+   10"
+   masers_rass-bsc10.fits = 7
+   masers_rass-fsc10.fits = 3
+   control_rass-bsc10.fits = 108
+   control_rass-fsc10.fits = 28
+   20"
+   masers_rass-bsc20.fits = 12
+   masers_rass-fsc20.fits = 8
+   control_rass-bsc20.fits = 147
+   control_rass-fsc20.fits = 60
+   30"
+   masers_rass-bsc30.fits = 14
+   masers_rass-fsc30.fits = 9
+   control_rass-bsc30.fits = 158
+   control_rass-fsc30.fits = 80
+INTEGRAL
+   masers_intibisass20.fits = 5
+   control_intibisass20.fits = 14
++CSC
+/su13/CSC (initial unfiltered results)
+   masers_csc2.tsv = 28 (26)
+   masers_csc3.tsv = 38 (28)
+   masers_csc5.tsv = 48 (29)
+   control_csc2.tsv = 136 (132)
+   control_csc3.tsv = ? (144)
+   control_csc5.tsv = 226 (160)
+/su13/topcat/CSC (finalized filtered results)
+   masers_csc2.fits = 26
+   masers_csc3.fits = 28
+   masers_csc5.fits = 29
+   control_csc2.fits = 132
+   control_csc3.fits = 144
+   control_csc5.fits = 160
++Count/HR/Flux
+   Use PIMMS to calculate flux http://heasarc.nasa.gov/Tools/w3pimms.html
+   RASS BSC >> RBSC table has more columns including flux but still not everything from pdf
+
+6/5
++Column Density: http://heasarc.gsfc.nasa.gov/cgi-bin/Tools/w3nh/w3nh.pl
++RASS multiple new tables found with same crossmatch results but different columns
+   /su13/topcat/tables/RASS/IX_10A_1rxs_cor(rassbsc13col).fits
+   /su13/topcat/tables/RASS/IX_10A_1rxs(rassbsc16col).fits
++Swift-BAT take notes in xrt.t
+   39 month First Palermo swift bat 754 results (J_A+A_510_A48)
+   54 month Second Palermo swift-bat 1286 results (J_A+A_524_A64)
+      /su13/topcat/tables/Swift-BAT/J_A+A_524_A64_m54.fits
+   70 month Swift-bat (baumgartner) 1210 results
+      http://arxiv.org/pdf/1212.3336v1.pdf
+      http://swift.gsfc.nasa.gov/docs/swift/results/bs70mon/
+      /su13/topcat/tables/Swift-BAT/BAT_70m_catalog_20nov2012.fits
++Crossmatch BAT_70 vs masers and control using CTPT_RA and CTPT_DEC
+      masers_bat70-10 = 34
+      control_bat70-10 = 191
+      Same results using 50" as 10". 3" has one fewer result (for masers) and that one is an accurate match. Therefore, 10" is determined to be the most appropriate search radius.
+
+6/6 
++Continue taking notes on 70 month Swift-BAT
++CSC 5" is best value. Looked in navigator, margin matches
+     http://hea-www.cfa.harvard.edu/~rhain/sky/my_cscresults_sig4to5.txt goes to:
+     /su13/CSC/19klist.t list of 19,399 galaxes. is this entire CSC? 
++RASS BSC compare 10,20,30
+     /su13/topcat/RASS/rass102030nav.t
+
+http://iopscience.iop.org/1538-3881/135/1/10/pdf/aj_135_1_002.pdf
+IDL tutorial
+
+6/7
++SOURCE MATCHING IN THE SDSS AND RASS: WHICH GALAXIES ARE REALLY X-RAY SOURCES
+   http://iopscience.iop.org/1538-3881/135/1/10/pdf/aj_135_1_002.pdf
+   /su13/sdss_rass_xray.t
+   Response /su13/probdistmodles.xlsx
++IDL Tutorial
+   http://www.astro.virginia.edu/class/oconnell/astr511/IDLguide.html
+   /su13/idl.t
+   
+
+-- Week 4 To Do --
+*Fix four problem galaxies in maserlist. DONE
+     Redo all maser crossmatches. DONE
+*Read On the Nuclear Obscuration of H2O Maser Galaxies DONE READ AGAIN
+*Crossmatch masers and control with:
+   Integral: intibisass in TOPCAT DONE
+   CSC: CSC Software DONE
+      try 2",3",5" DONE
+      Figure out HRC, ACIS, hard soft etc. Compare w and b and why do they differ DONE MOST
+   RASS: BSC & FSC TOPCAT DONE
+      10", 20", 30" compare results 
+      Read Voges 1999 BSC and 2000 FSC to calculate flux from counts DONE
+   XMM: 2XMM and IX-41 DONE
+      use IX-41 (2XMM-DR3) because it has everything from 2xmm DONE
+   Swift-BAT: Saw in Vizier in TOPCAT DONE
+Baumgartner et al. 2012; (http://arxiv.org/abs/1212.3336) DONE MOSTLY
+Gehrels, N., Chincarini, G., Giommi, P., et al. 2004, ApJ, 611 1005 INCOMPLETE
+*Experiment with different radii and analyze the marginal distinctions DONE RASS CSC
+*Examine information about each catalog to figure out how to convert counts and hardness ratio to flux DONE FOR RASS
+   How to calculate HR1, HR2 = (B-A)/(B+A) ? DONE FOR RASS
+   Figure out PIMMS (Goddard- HEASARCS) DONE
+*Determine energy ranges for the instruments. DONE DOUBLE CHECK
+*Energy units: Converting erg, crab, etc. to joule DONE 10^7
+*Create a table with detection rates from each query DONE
+   Row for each angle of each catalog and a column for maser and control
+*Read about column density N_H (cm^-3) neutral hydrogen DONE
+*Interpret the energy ranges for X-ray results DONE
+*Read and take notes: parejko http://iopscience.iop.org/1538-3881/135/1/10/pdf/aj_135_1_002.pdf DONE
+*IDL tutorial IN PROGRESS
+
+
+
+Week 5
+== 6/10-6/11 ==
++IDL Tutorial
+   http://www.astro.virginia.edu/class/oconnell/astr511/IDLguide.html
+   /su13/idl.t
++Choose search radii for CSC and RASS
+   /su13/topcat/tables/RASS/rass102030nav.t
+      Use BSC to compare different angular radii
+   CSC for 1,2,3,4,5"
+   Combine each maser+control to find counts between each radius
+      Concatenate them and then filter out all smaller by using "not" in topcat crossmatch
+   /su13/CSC/margins.t'
+
+== 6/12 ==
+IDL file to csc data into graph: /su13/CSC/csc.pro
+IDL file to convert any data into graph: /su13/margins/datable.pro
+   Three outputs: Histogram, Percent Factor, and Marginal Percent
+Add to /su13/latex/newpaper
+
+== 6/13 ==
+Continue writing paper describing methods for angular radius
+
+== 6/14 ==
++RASS 25" /su13/topcat/RASS/25
++IDL detection rates
++Column Density: http://heasarc.gsfc.nasa.gov/cgi-bin/Tools/w3nh/w3nh.pl
++PIMMS: http://heasarc.nasa.gov/docs/software/tools/
++Install HEASoft: FTOOLS, command line software
+   heainit: initializes software
+   fgui: opens gui, still requires command line what is the point???
+   fhelp ftools: general help
+   fhelp nh: column density help
+      fhelp nh > /su13/heasoft/fhelp_nh.t
++Install PIMMS http://heasarc.nasa.gov/docs/software/tools/
+   Download and unpackage into Applications/pimms
+   requires "make" command
+      install updated xcode: use this to install developer tools
+      get xcode from: https://developer.apple.com/downloads/index.action#
+         no credit card required
+   documentation suggests arch=darwin, but look in Makefile, it is actually arch=osx
+   requires "f77" fortran compiler, install
+      download from: http://gcc.gnu.org/wiki/GFortranBinaries#MacOS
+
+-- Week 5 To Do --
+*Examine energy ranges more closely. Current assumed energy ranges are based on information about the actual telescopes. Review specific information about individual catalogs to confirm they are using the assumed data ranges.
+*Spend more time looking at different RASS angular separations DONE
+   Histogram could be somewhat enlightening (number/separation) DONE
+*Continue IDL tutorial and practice. DONE
+   Use IDL to reformat the detection rate data currently in excel
+   Determine which data to include (ex. not each CSC run should be weighted equally to a single run for another catalog)
+*Still need to find and explore:
+   Gehrels, N., Chincarini, G., Giommi, P., et al. 2004, ApJ, 611 1005
+*Re-read On the Nuclear Obscuration of H2O Maser Galaxies
+*Take some more notes on 70 week Swift-BAT paper http://arxiv.org/abs/1212.3336 
+*Flux data
+   Ensure RASS is only catalogue that needs flux to be calculated
+   Calculate flux for all matches
+
+
+
+Week 6
+== 6/17 ==
++PIMMS Installation. E-mailed Koji Mukai and his tip worked.
++In order to get appropriate count to flux conversion, use the following commands
+	PIMMS > mo p [photon index] [nh]
+	PIMMS > inst flux ergs [range]
+	PIMMS > from rosat [instrument] [directory]
+      	PIMMS > go [counts]
+
+== 6/18 ==
++/su13/pimms/readfile.sh
+   Iterate nh through file data.dat reading lines consecutively.
+   Each value should be on a different line forming a long vertical vector of all
++/su13/pimms/nhfilter.awk filters out text from nh output
++/su13/pimms/asc?nh.awk turns topcat ascii file into nh friendly
+   ? = f for fsc (slots 2 and 3)
+   ? = b for bsc (slots 1 and 2)
++to go from ascii topcat table into list of nh values:
+   % awk -f asc2nh.awk masers_rfsc25.asc > 2kradec.dat
+   % sh readfile.sh < 2kradec.dat > output.asc
+   % awk -f nhfilter.awk output.asc > finalnhout.dat
+   2kradec.dat and output.asc are used as placeholders only, pipe data instead?
+   piping works use this instead:
+   % awk -f asc?nh.awk ./data/toptables/???sc25.asc | sh readfile.sh | awk -f nhfilter.awk > ./data/nh/finalnhout.dat
++put all data with asc tables in /su13/pimms/data
++/su13/pimms/
+   comblines.awk combines all lines together into one string.
+   comblinesplit.awk: choose how many old lines you want combined into each new line
+   ***comblines.awk: Turns table into strings ready for final table
+      each code has loop for appropriate number of rows and column titles of original table
+      output: /su13/pimms/data/nh/***table.strings
+   Rename rows in final string tables so each table has common titles
+   By hand, add *r*nh.string row to the bottom of each *r*table.strings (label nh)
+
+== 6/19 - 6/20 ==
++Finalize results from yesterday. Now there is a transposed table, including all important columns now as rows, including nh but not flux. These are the *r*table.strings in /data/nh. There are also *r*nh.dat files which are columns of nh to translate into pimms code.
++Convert velo(vsys) into redshift and replace this row with z = v/c
+   /pimms/data/v2z
+   v2z.awk converts velo km/s to z
+   *r*velo.string has string of velo in km/s with no letters only numbers
+   *r*z.string has string of redshifts
++Copy nh tables into /pimms/data/finaltables
+   *r*.strings is the sideways table
+      Replace velo with redshift
++/pimms/piterate/ This directory contains files which can be run by pimms in one of two ways, outputting a log file.
+   Execute ./pimms, then:
+      pimms > @~/gdrive/jmu/astrores/su13/pimms/piterate/example.xco
+   Alternative less desirable choice can be run directly from command line
+      % ./pimms < example.xco > example.log
++Translate nh data into pimms compatible using awk code.
+   su13/pimms/data/pimmput
+   r2c.awk > Take z, count, and nh rows and turn them into two columns in .dat file
+   c2pimms.awk > take those 3 columns in that order and convert it into pimms friendly
+      redshift is irrelevant so first column is ignored (code works around its presense)
+   PIMMS > @~/gdrive/jmu/astrores/su13/pimms/data/pimmput/*r*3.xco
+   output is sent to /applications/pimms
++Convert pimms output
+   su13/pimms/outpimm % put log files here
+   log2c.awk > converts pimms log into column of fluxes with flux label on top
+      make this output *r*-flux.dat
+   re-use su13/pimms/comblines/comblines.awk
+      *r*-flux.string
+   Combine this flux string into pimms/finaltables/*r*.strings
+   /pimms/data/finaltables/r2c10.awk
+      convert into table form *r*.dat
+   Put into topcat folder and add # to make readable ascii
+      /topcat/tables/final+flux/ascii/*r*.asc
+      use topcat to convert into fits format
++There were some mistakes in crb conversion, be careful with prior versions. final topcat table is accurate. (had to extend 1rxs from 14 to 152 and remove a filename from inside the table)
+
+== 6/21 ==
++su13/dL/zdl.csv redshift > dL table
++2XMM angular radius see http://www.aanda.org/articles/aa/pdf/2009/01/aa10534-08.pdf
+   *page 2 (340) says, "The EPIC cameras... a ﬁeld of view (FOV) ∼30 arcmin diameter and an on-axis spatial resolution ∼5 arcsec FWHM... The physical pixel sizes for the pn and MOS cameras is equivalent to ∼1 and ∼4 arcsec, respectively" 
+   *page 9 (347) says, "As the mean positions of bright X-ray sources can be determined to a statistical precision of 1" in the XMM-Newton images, and typical sources to a precision of 1−2""
+   *page 20 (358) 9.5 Astrometric Properties
+      Suggests 92% within 3.7" (should be 0.1 but there are extraneous matches because err)
+   Form histogram in 0.2" steps from 0-10", very similar curve with extraneous matches tapering off
+   This tapering rather than linearly increasing extraneous matches outside of a rayleigh fit is an almost identical phenomenon between both the 2XMM/SDSS crosmatch and the 2XMM/MCP crossmatch. Almost all extraneous matches outside the rayleigh distribution occur between 3-7" in both the match against SDSS and against MCP. This suggests that our results are caused by a similar phenomenon. When the angular separation of each object is divided by its individual position error, the resulting histogram much more neatly fits a rayleigh curve. The extraneous matches were pulled in under the curve to represent a lower radius, suggesting they are far more likely to be true matches. Because this error information is unavailable to do individualized calculations with the 2XMM/MCP match data, it cannot be known with certainty that the extraneous values are each within an appropriate error bar to explain their poor match with the rayleigh curve. However, because the values to approach zero and because the distinction from the rayleigh curve matches very closely with the 2XMM/SDSS distinction from rayleigh, the most logical assumption would be that these extraneous results are in fact true matches whose increased angular separation are explained by their individual position error.
+
+-- Week 6 to do --
+*Accomplish PIMMS install
+*Use PIMMS and nh tool to calculate flux for RASS
+*Use IDL for detection rate data
+*Continue writing paper: (look at conclusion)
+
+-- Week 6 Accomplishments --
+*Get both ftools (nh) and PIMMS up and running
+*Write code to pipe output from awk and shell scripts through each other consecutively running nh commands against tables of ra and dec extracted as strings from crossmatches
+*Use strings made from tables of nh and counts to create appropriate pimms *.ocx file to get flux values from each, then pipe data through a few awk scripts to include strings with original relevant columns to form four new RASS tables (maser detections and control both matched versus each FSC and BSC) each with the following columns:
+   name  -- This is the MCP name
+   1RXS  -- This is the RASS name
+   ra    -- From MCP
+   dec   -- From MCP
+   z     -- Calculated from z = vsys/c (from MCP)
+   count -- From RASS
+   flux  -- Calculated using pimms from nh and count
+   hr1	 -- From RASS
+   hr2	 -- From RASS
+   nh	 -- Calculated using ftools from nh function from ra and dec
+*A substantial collection of awk, shell (*.sh), and pimms (*.ocx) scripts were developed. These include generic scripts that can be altered for various purposes as well as scripts modeled specifically for the tables in question. Through a shell script that was developed here called readfile.sh, command line functions can be iterated consecutively through a data table and the information can be output into a new table. This is but one of a series of scripts that were developed to permit easy processing of data tables through the HEAsoft nh tool and PIMMS. Neither of these tools were developed to permit this process in a simple manner and would otherwise require individualized inputs for each consecutive component with a similar manual extraction of data. Using these scripts the process can be mostly automated; to be completely automated one would only require a single additional shell script to combine each sub-script together. The method of transposing data tables horizontally and reversing the process was a very important technique used in this week's tasks. It allows for the straightforward manipulation of columns in ways otherwise impossible except through manual work on an individualized row by row basis.
+
+Week 7
+== 6/23 ==
+~ Add angular separation into tables
++su13/pimms/c2r.awk columns to rows. extract separation and put into su13/pimms/data/finaltables/*r*.strings
++Use c2r.awk to convert back to columns
++Put into topcat/RASS/final+flux-25"/*r*.asc
+~ Swift angular radius
++http://arxiv.org/pdf/1212.3336v1.pdf
+   Section 5.1.1 page 9
++detection-rates.xlsx
+   Using counterpart radius, almost everything within 2-3"
+~ Integral angular radius
++1-30 in bins of 1, detection-rates.xlsx, no appreciable trend
++http://www.aanda.org/articles/aa/pdf/2010/15/aa14935-10.pdf
+   Very little helpful information
+   Page 2: The positions of newly detected
+sources were cross-correlated with SIMBAD and NED cataloges using a 4.2 arcmin search radius (90% conﬁdence level for a source detected at 5−6 standard deviations, K07),
++20" was initial decision, any reason to change?
+~ Use IDL to form Histograms for 2XMMi, Swift-BAT, Integral
++su13/margins/datable.pro
++su13/margins/ind2flat.awk converts regular data table of hist values into 1,1,2,2,3,3
++su13/margins/* (2xmmi, integral, swift)
+   *ind.dat: normal histogram table
+   *flat.dat: histogram table spread out to make flat graph
+   *hist.eps: histogram
+   *fact.eps: PIF
+   *perc.eps: arbitrarily scaled percentage graph
+~ Angular radii to use (see week 6 summary for most up to date values):
+   RASS: 25"
+   CSC: 3"
+   Swift: 2-3"
+   2XMMi: 4-7"
+   Integral: 20"
++For Swift and 2XMMi, the first value is PIF value and also point that rayleigh curve should flatten, however the taper pattern suggests the values within the disclosed ranges are actually true matches, so use the peak values there.
+~ Concatenate RASS Tables
++topcat refused: dec float vs double not compatible
++combined in aquamacs FSC first then BSC
++su13/topcat/tables/RASS/final+flux-25"/*rass.asc
+~ Catalog Energy Ranges
+   RASS: 0.1-2.4 keV (from RASS BSC paper, opposed to old value 0.1-2)
+   CSC: 0.1-10 keV (confirmed same)
+   Swift-BAT 70: 14–195 keV (from catalog paper linked above, opposed to 150 peak)
+   2XMMi-dr3: 0.2-12 keV (confirmed same)
+   Integral: 17−60 keV (this is from intibisass 7 year linked above, contrary to 15k-10M)
+~ Flux Histogram for RASS su13/flux/rass
++*.strings files each have only a string of flux values and no words
++use c2r.awk to convert into *.dat columns
+
+== 6/24 ==
+~ Integrate Rayleigh fit into radius histograms
++su13/margins/datable2.pro This new one handles data better
+      It only requires a short table and a rayleigh vector, no more "flat.dat" (psym=10)
+      Comment out percentage graph
++*ind.dat files should have 0 0 added to top
++New histograms are formed with dotted rayleigh fit for 2XMMi and Swift
+~ RASS Flux Histogram su13/flux/rass
++E-mail with three programs copied into this directory
+   ahist.pro text copied, simplest
+   plothist.pro more complex
+   cghistplot.pro huge
++log.awk outputs log value for each line $1
+   % awk -f log.awk rass/*r*flux.dat > rass/*r*log.dat
++original string files go into rass/strings
++original data files go into rass/exp
++Three graphs for BSC, FSC, BSC+FSC
+   rbsc.eps
+   rfsc.eps
+   rass.eps
+~ CSC flux histogram su13/flux/csc
++Convert topcat tables into ascii, drop into su13/flux/csc/tables
++su13/flux/csc/cscflux.awk
+   Creates vector from value $17 which is aper_b, some have no aper_b so use aper_w $20
+   % awk -f cscflux.awk tables/masers_csc3.asc > mcscflux.dat
+   Delete first line of .dat file because it is column title
++Use log.awk to convert these into log.dat files and put old .dat files into csc/tables
++cscflux.eps
+~ Integral flux histogram su13/flux/integral
++Exact same process as CSC except:
+   flux is stripped of *10^-11, so subtract 11 from the log output
+
+== 6/25 ==
+~ Finalize Crossmatches
++su13/topcat/tables/Swift-BAT/*bat3.fits
+		  */XMM/*2x7.fits
+~ IDL Detection rates/su13/detection-rates/
++detrate.pro outputs mvc.eps and mcve.eps
+~ Fluxes for Swift, 2XMMi su13/flux/*
++Deselect all other columns and save as .dat
++2xmmi convert using log.awk
++Swift convert using log-12.awk
++*flux.epsm2x7
+~ dL Luminosity Distancesu13/dL
++CSV table with dL values for all redshifts here: zdl.csv
++Make more awk-friendly tables with all relevant data and put it in here:
+   su13/tables
+   RASS just copy the tables from topcat/tables/RASS/final+flux and remove #, rename to .dat
+   2XMMi open topcat fits files and resave into su13/tables/2xmmi/*.asc
+      2x-table.awk = convert topcat .asc output into friendly .dat format
+   Swift: Save .asc files with only relevant columns selected in topcat
+
+== 6/26 - 6/27 ==
+~ Standardize tables and finish CSC
++Order of columns and format of flux
+   name ra dec z flux Separation (catalog name) ... ... ...
+   Flux must be in log(ergs)
+   Separation in arcseconds
++Done for: 2XMMi, Integral, RASS, Swift
++CSC has two fluxes w and b. Almost all use w, some use flux_b
+   For most normal ones, use w in flux and say 0 for flux_b
+   For ones with no w and yes b, put b in flux and put 1 in flux_b
+   For ones with both, put w in flux and b in flux_b
+~ Luminosity
++Convert all tables to csv (turns out this was completely unnecessary)
++Import all tables into sdss to do crossmatch against d_L table
+   Problem with m2x7 and cbat, different error for each table, but same error for .csv and .dat versions
+      m2x7.dat > replace "" "" with void void in line 28 (success)
+      cbat3.dat remove luminosity column. -Infinity at lines 82 and 94 > cbatnu.dat
+   Column titles may not start with a number
+      Replace 2XMMi with XMMi
++Crossmatch against d_L using SQL in SDSS Query
+   Example SQL 2XMMi:
+      SELECT cm.name, cm.ra, cm.dec, cm.z, cm.flux, dl.d_L, cm.separation, cm.2XMMi, cm.hr1, cm.hr2, cm.hr3, cm.hr4
+      FROM ConstantinResearchGroup.EmilRex.Redshift_d_L dl, c2x7 cm
+      WHERE ABS(cm.z - dl.z) <= 0.000005
+
+
+-- Week 7 to do --
+DONE*Spend more time confirming angular radius
+DONE*Add angular separation to each RASS table
+DONE*Create a table for each maser and control for RASS combining BSC and FSC (keep old ones)
+DONE*Confirm energy ranges and angular separation for each catalog
+DONE*Integrate Rayleigh fit into radius histograms for 2xmmi and Swift
+DONE*New crossmatches for updated crossmatch radii, put in tables
+DONE*Graph data from detection_rates.xlsx in IDL
+(1/2)*Diagrams for flux for each catalog (BSC+FSC as one, and also separate)
+DONE   Histogram
+   Table: Average, median, std dev (what kind of distribution?)
+*Zhang et al. 2006; Greenhill et al. 2008; Neufeld et al. 1994
+*Calculate dL (luminosity distance) and from this calculate absolute luminosity using 4pir2
+*Continue writing paper: (look at conclusion)
+
+-- Week 7 Summary --
+*Finalized RASS tables with angular separation values
+*Make angular radii histograms in IDL and fit rayleigh curves for 2XMMi, Swift, Integral (no fit for Integral)
+*Determined angular radii to use and energy range of each instrument:
+   Used data from catalog papers as well as histograms & PIF graphs of MCP crossmatch
+   RASS:     25"    0.1-2.4 keV
+   CSC:      3"     0.1-10 keV
+   Swift:    3"     14–195 keV
+   2XMMi:    7"     0.2-12 keV
+   Integral: 20"    17−60 keV
+*Re-crossmatch and create detection rate graphs in IDL (maser vs control and m/c vs energy)
+*Create Histogram for flux values
+*Create standardized tables: name ra dec z flux(logergs) Separation(arcsec) (catalog objid) (other) ...
+*Input all tables into MyDB and find d_L values for each object
+
+
+Week 8
+== 7/1 - 7/2 ==
+~ dL
++Drop tables into su13/dL/
++comma2space.awk each table
++Negative redshift
+   SQL Crossmatch crf vs crfdL to find those which do not have dL (crf as example)
+      SELECT cm.name, cm.ra, cm.dec, cm.z, cm.flux, cm.separation, cm.RXS, cm.nh, cm.count, cm.hr1, cm.hr2
+      FROM  crf cm
+      WHERE cm.name NOT IN (Select name FROM crfdL)
+      +results into *_neg
+   Find distance in NED median (min-max) and compare it to calculation from absolute value of z
+      SELECT cm.name, cm.ra, cm.dec, cm.z, cm.flux, dl.d_L, cm.separation, cm.BAT_NAME
+      FROM ConstantinResearchGroup.EmilRex.Redshift_d_L dl, cbat_neg cm
+      WHERE ABS(cm.z + dl.z) <= 0.000005
+      c2x7: 1 off, 3 negatives (must be 2 duplicates), 3 abs (added to c2x_dl.dat and converted to lum)
+         NGC1569 dL(abs) = 1.457742; distance = 2.5 (1.6-6.31)
+	 NGC224  dL(abs) = 4.208776; distance = 0.773 (0.44-2.8)
+	 NGC3031 dL(abs) = 0.499708; distance = 3.630 (1.4-5)
+      cbat: 2 off, 3 negatives (must be 1 duplicate), 1 abs (because two of which are z= -1) (added and
+         05151978    	 dL(abs) = (z=-1)
+	    NED: z = 0.023454; dL = 98.1 (H=73, _m=.27, _v=0.73)
+	 11144391+794335 dL(abs) = (z=-1)
+	    NED: z = 0.037283; dL = 158 (H=73, _m=.27, _v=0.73)
+	 NGC3031 	 dL(abs) = 0.458062 (dL should be same above, but this has a less precise z?)
+      ccsc: 3 off, 3 negatives, 3 abs (added and converted)
+         NGC3031 (same as c2x7)
+	 NGC404  dL(abs) = 0.707947; distance = 3.095 (2.4-10)
+	 NGC4419 dL(abs) = 3.666684; distance = 17.25 (11.5-22.9)
+      crb: 0 off, 1 negative, 1 abs (added and converted removed extra)
+         NGC3031 (same as cbat)
+      crf: 1 off, 1 negative, 1 abs (added and converted)
+         UGC6456 dL(abs) = 1.457742; distance = 4.45 (1.4-4.8)
+      m2x7: 1 off, 1 negative, 1 abs (added to m2x_dl.dat and converted to lum)
+         IC10 dL(abs) = 4.917831; distance = 0.807 (0.501-1.8) done
+	 NED VALUES:
+	 He2-10     z=0.002912 dL=15.8
+	 NGC4038/39 z=0.005477 dL=27.5
+	 NGC4214    z=0.000970 dL=7.54
+	 NGC5253    z=0.001358 dL=9.35
+      mcsc: J0414+0534 has 0 redshift in table, MCP: z = 2.64 (added to lum)
+      	 J0414+0534 NED: z = 0.958400; dL = 6117 (H=73, _m=.27, _v=0.73)
++Separtion is off for CRB
+   Divide all values by 3600 in lum table (other tables before this are still bad)
+   su13/dL/rass/sepdive3600.awk
+~ Luminosity
++su13/dL/dl2lum.awk
+   convert files into luminosity then put old files into pre-lum folders
++su13/dL/ahistlum.pro
+   luminosity histograms
+~ CSC vs 2XMM
++CSC
+   ACIS (broad): 0.5 - 7.0 keV
+      soft band   = 0.5 - 1.2 keV
+      medium band = 1.2 - 2.0 keV
+      upper band  = 2.0 - 7.0 keV
+   HRC (wide): 0.1-10 keV
+
+== 7/3 ==
+~ CSC vs XMM
++Read CSC catalog (placed in su13) pages 66-## 
+   3.9 spectral model fits is page 69
+Put notes here: su13/flux/CSCvXMM.t
+
+== 7/5 ==
++Extragalactic H2O masers and X-ray absorbing column densities
+   su13/maser-papers/zhang06.*
++Water Maser Emission from X-ray heated circumnuclear gas in active galaxies
+   su13/maser-papers/neufeld94.*
+
+
+-- Week 8 to do --
+DONE*d_L use distance from NED and compare to absolute values
+DONE*Compare CSC vs 2XMMi fluxes
+*Flux tables: Average, median, std dev (what kind of distribution?)
+*Zhang et al. 2006; Greenhill et al. 2008; Neufeld et al. 1994
+DONE*Calculate absolute luminosity using 4pi*r^2 from dL values
+DONE*Create luminosity histograms and tables analogous to those for flux
+*Work on presentation
+*Continue writing paper: (look at conclusion)
+
+-- Week 8 Summary --
+*Identified d_L for all objects including improperly formatted redshift data. Individually determined an appropriate dL value (used NED data instead of absolute value)
+*Calculated the luminosity for each object in every table, now all formatted as such:
+   name ra dec z flux d_L lum separation (catalog objid) ...
+*Create luminosity histograms and tables analogous to those for flux
+*Compare CSC vs 2XMMi fluxes: CSC model made intentionally to be comparable to 2XMM, however 2XMM does not consider column density into their calculations while CSC does.
+*Read and took notes: Zhang et al. 2006; Neufeld et al. 1994
+
+
+Week 9
+== 7/8 - 7/9 ==
+~ su13/maser-papers/ keep reading and taking notes
++Discuss column density of masers
+   Megamasers coincide with galaxies of higher intrinsic column density
+   Megamaser galaxies have qualities indistinguishable from Seyfert 2 AGN
+   Maser gas may explain obscuration
+
+== 7/10 ==
+~ Presentation
+su13/presentation
+
+== 7/11 - 7/12 ==
++To initiate nh
+   % setenv HEADAS /Applications/heasoft-6.13/i386-apple-darwin11.4.2
+     alias heainit "source $HEADAS/headas-init.csh"
+     heainit
++Move 2x7 tables from su13/tables/2xmmi to su13/pimms/data/toptables
++Adjusted piping shell script from 6/18:
+   % awk -f radec-nh.awk ./data/toptables/m2x7.asc | sh readfile.sh | awk -f nhfilter.awk > ./data/nh/m2x7-nh.dat
++Convert nh and c2x7.dat table into strings using su13/pimms/comblines/c2r.awk
++Form table with three columns: z flux nh (use c2r.awk again to turn strings into columns)
+   *2x7-zfnh.dat
++Convert flux in zfnh tables and remove z: su13/pimms/data/pimmput/2xmm/log2flux.awk
+   delete zfnh and replace with *-fnh.dat
++Convert to pimms format using similar code to last time (difference here use flux instead of counts)
+   su13/pimms/data/pimmput/f2pimms2x.awk
++Execute in pimms
+   PIMMS > @~/gdrive/jmu/astrores/su13/pimms/data/pimmput/2xmm/c2x7-fnh.xco
++Convert log file into flux vector
+   su13/pimms/data/outpimm/log2f.awk > *2x7-newflux.dat
++Convert flux .dat into .strings
+
+-- Week 9 to do --
+DONE*Spend more time with Zhang et al. 2006; read Greenhill et al. 2008
+DONE*Work on presentation
+*CSC adjust flux for 2-10keV, 2XMMi make same adjustment plus include NH
+*Continue writing paper: (look at conclusion)
+*Flux tables: Average, median, std dev (what kind of distribution?)
+
+-- Week 9 Summary --
+*Read and take notes: Zhang et al. 2006, Greenhill et al. 2008
+*Work on presentation
+*Adjust CSC and 2XMM fluxes to fit 2-10 keV range, include Galactic NH in 2XMM calculation
+
+Week 10
+== 7/15 - 7/16 ==
+~ CSC Fluxes
++Copy su13/tables and save ra/dec columns from topcat into su13/pimms/data/toptables/csc
+DON'T DO THESE STEPS FOR CSC UNTIL...
++Pipe to convert RA/DEC columns into NH column
+   % awk -f radec-nh.awk ./data/toptables/csc/m-csc3-radec.dat | sh readfile.sh | awk -f nhfilter.awk > ./data/nh/csc/m-csc3-nh.dat
++Convert nh and *-csc.dat into strings
+   % awk -f ./comblines/c2r.awk ./data/nh/csc/c-csc3-nh.dat > ./data/nh/csc/c-csc-nh.strings
+     awk -f ./comblines/c2r.awk ./data/nh/csc/m-csc3-nh.dat > ./data/nh/csc/m-csc-nh.strings
+     awk -f ./comblines/c2r.awk ./data/toptables/csc/c-csc.dat > ./data/toptables/csc/c-csc.strings
+     awk -f ./comblines/c2r.awk ./data/toptables/csc/m-csc.dat > ./data/toptables/csc/m-csc.strings
+.................................HERE
++Keep nh values in table but set nh = 0 in f2pimmscsc.awk
++Extract flux and nh from these files and combine them into one file (deleting initial strings)
+   su13/pimms/data/pimmput/fnh.strings
++strings to dat
+   % awk -f ../../../comblines/c2r.awk c-csc3-fnh.strings > c-csc3-fnh.dat
+     awk -f ../../../comblines/c2r.awk m-csc3-fnh.strings > m-csc3-fnh.dat
++dat to xco
+   % awk -f f2pimmscsc.awk m-csc3-fnh.dat > m-csc.xco
+     awk -f f2pimmscsc.awk c-csc3-fnh.dat > c-csc.xco
++Open pimms
+   % /applications/pimms/pimms
++Run xco through pimms
+   PIMMS > @~/gdrive/jmu/astrores/su13/pimms/data/pimmput/csc/m-csc.xco
+   PIMMS > @~/gdrive/jmu/astrores/su13/pimms/data/pimmput/csc/c-csc.xco
++Convert output of log to fluxes
+   % cd data/outpimm/csc
+     awk -f ../log2f.awk c-csc.log > ccsc_2-10flux.dat
+     awk -f ../log2f.awk m-csc.log > mcsc_2-10flux.dat
+~ Redo all for 0.5-2 keV and 0.5-10 keV
++dat to xco
+   % awk -f csc/f2pimmscsc52.awk csc/m-csc3-fnh.dat > csc/m-csc52.xco
+     awk -f csc/f2pimmscsc52.awk csc/c-csc3-fnh.dat > csc/c-csc52.xco
+     awk -f csc/f2pimmscsc510.awk csc/m-csc3-fnh.dat > csc/m-csc510.xco
+     awk -f csc/f2pimmscsc510.awk csc/c-csc3-fnh.dat > csc/c-csc510.xco
+     awk -f 2xmm/f2pimms2x52.awk 2xmm/c2x7-fnh.dat > 2xmm/c2x7-52.xco
+     awk -f 2xmm/f2pimms2x52.awk 2xmm/m2x7-fnh.dat > 2xmm/m2x7-52.xco
+     awk -f 2xmm/f2pimms2x510.awk 2xmm/c2x7-fnh.dat > 2xmm/c2x7-510.xco
+     awk -f 2xmm/f2pimms2x510.awk 2xmm/m2x7-fnh.dat > 2xmm/m2x7-510.xco
++Open pimms
+   % /applications/pimms/pimms
++Run xco through pimms
+   PIMMS > @~/gdrive/jmu/astrores/su13/pimms/data/pimmput/csc/m-csc52.xco
+   PIMMS > @~/gdrive/jmu/astrores/su13/pimms/data/pimmput/csc/c-csc52.xco
+   PIMMS > @~/gdrive/jmu/astrores/su13/pimms/data/pimmput/csc/m-csc510.xco
+   PIMMS > @~/gdrive/jmu/astrores/su13/pimms/data/pimmput/csc/c-csc510.xco
+   PIMMS > @~/gdrive/jmu/astrores/su13/pimms/data/pimmput/2xmm/c2x7-52.xco
+   PIMMS > @~/gdrive/jmu/astrores/su13/pimms/data/pimmput/2xmm/m2x7-52.xco
+   PIMMS > @~/gdrive/jmu/astrores/su13/pimms/data/pimmput/2xmm/c2x7-510.xco
+   PIMMS > @~/gdrive/jmu/astrores/su13/pimms/data/pimmput/2xmm/m2x7-510.xco
++Convert output of log to fluxes and find log(flux) log2flog.awk
+   % cd data/outpimm
+     awk -f log2flog.awk csc/c-csc-510.log > csc/flog/c-csc-510flog.dat
+     awk -f log2flog.awk csc/m-csc-510.log > csc/flog/m-csc-510flog.dat
+     awk -f log2flog.awk csc/c-csc-52.log > csc/flog/c-csc-52flog.dat
+     awk -f log2flog.awk csc/m-csc-52.log > csc/flog/m-csc-52flog.dat
+     awk -f log2flog.awk 2xmm/c2x7-510.log > 2xmm/flog/c2x7-510flog.dat
+     awk -f log2flog.awk 2xmm/m2x7-510.log > 2xmm/flog/m2x7-510flog.dat
+     awk -f log2flog.awk 2xmm/c2x7-52.log > 2xmm/flog/c2x7-52flog.dat
+     awk -f log2flog.awk 2xmm/m2x7-52.log > 2xmm/flog/m2x7-52flog.dat
+~ Bringing 2XMM and CSC into tables and together into charts
++Convert *flux.dat in *log.dat for 2-10 keV
+   % awk -f log.awk 2xmm/m2x7-2-10.dat > 2xmm/m2x-2-10-flog.dat
+     awk -f log.awk 2xmm/c2x7-2-10.dat > 2xmm/c2x-2-10-flog.dat
+     awk -f log.awk csc/ccsc_2-10flux.dat > csc/ccsc_2-10flog.dat
+     awk -f log.awk csc/mcsc_2-10flux.dat > csc/mcsc_2-10flog.dat
++Convert *flog.dat into *log.strings
+   % awk -f c2r.awk csc/flog/m-csc-2-10flog.dat > csc/strings/m-csc-2-10flog.strings
+     awk -f c2r.awk csc/flog/c-csc-2-10flog.dat > csc/strings/c-csc-2-10flog.strings
+     awk -f c2r.awk csc/flog/m-csc-510flog.dat > csc/strings/m-csc-510flog.strings
+     awk -f c2r.awk csc/flog/c-csc-510flog.dat > csc/strings/c-csc-510flog.strings
+     awk -f c2r.awk csc/flog/m-csc-52flog.dat > csc/strings/m-csc-52flog.strings
+     awk -f c2r.awk csc/flog/c-csc-52flog.dat > csc/strings/c-csc-52flog.strings
+     awk -f c2r.awk 2xmm/flog/m2x7-2-10-flog.dat > 2xmm/strings/m2x7-2-10-flog.strings
+     awk -f c2r.awk 2xmm/flog/c2x7-2-10-flog.dat > 2xmm/strings/c2x7-2-10-flog.strings
+     awk -f c2r.awk 2xmm/flog/m2x7-510flog.dat > 2xmm/strings/m2x7-510-flog.strings
+     awk -f c2r.awk 2xmm/flog/c2x7-510flog.dat > 2xmm/strings/c2x7-510-flog.strings
+     awk -f c2r.awk 2xmm/flog/m2x7-52flog.dat > 2xmm/strings/m2x7-52-flog.strings
+     awk -f c2r.awk 2xmm/flog/c2x7-52flog.dat > 2xmm/strings/c2x7-52-flog.strings
++Fix titles for each strings file to label range for flux calculations
++Add each string to original strings file for all four initial tables
+   su13/pimms/toptables/csc/*-csc.strings
+   su13/pimms/toptables/csc/*-csc.strings
+
+== 7/17 ==
+~ Bring in new data from complete CSC and 2XMMi-DR3 tables su13/newdata_2XMM+CSC
++*-src2x7_15col.asc is all new crossmatch in topcat folder
++Convert into friendlier format (original file remains in topcat folder)
+   Rename column titles appropriately
+   Remove #
+   iaucompress.awk: compresses IAUNAME into one field and converts velocity into z
+   *-src2x7_15col.dat is new file
+~ 2XMM: Create a new table for each flux range
++0.2-12 keV
+   scep8.awk: pulls sc_ep8 into flux column
+   put into 0.2-12 folder
++0.5-2 keV
+   52.awk combines (which columns?) to form this range
++2-10 keV
+   212.awk extracts 2-12 keV range combination of energy bands 4 and 5, columns 11 and 12
+   initiate nh
+      % setenv HEADAS /Applications/heasoft-6.13/i386-apple-darwin11.4.2
+  	alias heainit "source $HEADAS/headas-init.csh"
+    	heainit
+   Pipe data through nh
+      % awk -f ../radec-nh.awk c-src2x7_16col.dat | sh ../readfile.sh | awk -f ../nhfilter.awk > 2-10/c-src2x7_nh.dat
+        awk -f ../radec-nh.awk m-src2x7_16col.dat | sh ../readfile.sh | awk -f ../nhfilter.awk > 2-10/m-src2x7_nh.dat
+   Combine two files using string method
+      % awk -f ../c2r.awk 2-10/c-src2x7_212.dat > 2-10/c-src2x7_212.strings
+	awk -f ../c2r.awk 2-10/m-src2x7_212.dat > 2-10/m-src2x7_212.strings
+	awk -f ../c2r.awk 2-10/c-src2x7_nh.dat > 2-10/c-src2x7_nh.strings
+	awk -f ../c2r.awk 2-10/m-src2x7_nh.dat > 2-10/m-src2x7_nh.strings
+      (combine strings together nh first then rename with nh212)
+      % awk -f ../c2r.awk 2-10/m-src2x7_nh212.strings > 2-10/m-src2x7_nh212.dat
+	awk -f ../c2r.awk 2-10/c-src2x7_nh212.strings > 2-10/c-src2x7_nh212.dat
+      delete all strings files and individual nh and flux files
+   Create pimms xco file
+      % awk -f pimms_f212-f210.awk c-src2x7_nh212.dat > c-src2x7_nh212.xco
+        awk -f pimms_f212-f210.awk m-src2x7_nh212.dat > m-src2x7_nh212.xco
+   initiate pimms
+      % /applications/pimms/pimms
+   Convert in pimms to 2-10 keV flux
+      PIMMS > @~/gdrive/jmu/astrores/su13/newdata_2xmm+csc/2xmm/2-10/c-src2x7_nh212.xco
+      PIMMS > @~/gdrive/jmu/astrores/su13/newdata_2xmm+csc/2xmm/2-10/m-src2x7_nh212.xco
+   Convert pimms output into log flux
+      % awk -f ../../log2flog.awk m-src2x7_210.log > m-src2x7_210.dat
+        awk -f ../../log2flog.awk c-src2x7_210.log > -src2x7_210.dat
+   Create full table with 2-10 flux using strings method
+      % awk -f ../../c2r.awk c-src2x7_210.dat > c-src2x7_210.strings
+        awk -f ../../c2r.awk m-src2x7_210.dat > m-src2x7_210.strings
+	awk -f ../../c2r.awk ../c-src2x7_16col.dat > c-src2x7_210t.strings
+        awk -f ../../c2r.awk ../m-src2x7_16col.dat > m-src2x7_210t.strings
+      % awk -f ../../c2r.awk m-src2x7_210t.strings > m-src2x7_210t.dat
+        awk -f ../../c2r.awk c-src2x7_210t.strings > c-src2x7_210t.dat
++Find log of primary flux value in 0.2-12 and 0.5-2 tables 
+   % awk -f ../flux2flog.awk 0.5-2/c-src2x7_52.dat > 0.5-2/c-src2x7_52-flog.dat
+     awk -f ../flux2flog.awk 0.5-2/m-src2x7_52.dat > 0.5-2/m-src2x7_52-flog.dat
+     awk -f ../flux2flog.awk 0.2-12/c-src2x7_scep8.dat > 0.2-12/c-src2x7_scep8-flog.dat
+     awk -f ../flux2flog.awk 0.2-12/m-src2x7_scep8.dat > 0.2-12/m-src2x7_scep8-flog.dat
+~ CSC: Create a new table for each flux range
++Do new crossmatch, including more columns, new columns listed:
+   Fluxes only for each group, not confidence limits
+      Master/aperture/source/energy
+      Master/aperture/source/spectral/power
+      Master/aperture/psf/energy
+      Master/aperture/psf/spectral/power
+   Column Density, Photon index, Flux 0.5-10
+      Master/Model/Power Law: value from all three categories, no confidence limits
+   Timing
+      Source/Observation-Specific/Observation Timing/Ob...(MJD), both items
+
+== 7/18 ==
+~ CSC continue work with new table
++Four flux values to choose from (ignoring black body)
+   flux_aper_* = Direct calculation from counts, not considering power-law
+   flux_powlaw_aper_* = Calculation from counts considering power-law (close to above but diff, use this one)
+   flux_aper90_* = same as #1 but considers energy range not size of source
+   flux_powlaw_aper90_* = same as #2 but considers energy range not size of source
+   flux_powlaw = power-law calculation for 0.5-10 keV, use this also
++Full tables extracted from CSC saved in su13/topcat/tables/csc/detailed-flux
+   Also save here abridged version with only relevant columns (get rid of unused fluxes and a couple others)
+   *-csc3+flux.fits = full table including duplicates
+   *-csc3+flux-filtered.fits = above minus duplicates (selected "best" according to topcat which is really just the first)
+   *-csc3+ffab.fits = abridged version of filtered table with unnecessary columns removed
+   Screen shot shows selection of abridged version columns from full version
+~ CSC flux plan
++Using webpimms it was tested to compare (0.5-2 calculation) + (2-10 calculation) ? (0.5-10 calculation)
+  0.1-10 input 2e-12: 5.607E-13 + 1.023E-12 = 1.584E-12 success
++Calculate ACIS data separately from HRC data
++ACIS: set equal to zero is there is HRC
+   0.5-2 keV: Add soft and medium energy bands
+   2-10 keV: PIMMS calculation from hard
+   0.5-10 keV: Add two above
++HRC: set equal to zero for all ACIS objects
+   PIMMS calculation for each short range
+   0.5-10 keV: add two above
+~ CSC flux execution
+cd su13/newdata_2xmm+csc/csc
++Import ascii files
+   *-csc3+ffab.asc
++Convert files into friendlier format: Change column titles, velo2redshift, combine cscname into one value, turn "" into 0
+   % awk -f friend.awk c-csc3+ffab.asc > c-csc3+ffab.dat
+     awk -f friend.awk m-csc3+ffab.asc > m-csc3+ffab.dat
+   delete ascii files
+   stick in # and import into topcat, confirm organized properly, export back to same filename and remove #
+      this will fix spacing and make this table easier to read in a text editor
++ACIS: Combine/split columns into appropriate flux column files
+   0.5-2 keV: Add soft (0.5–1.2) and medium (1.2–2.0) energy bands $10 and $11
+      % awk -f sm52.awk c-csc3+ffab.dat > acisfluxcols/0.5-2/c-acis52.dat
+        awk -f sm52.awk m-csc3+ffab.dat > acisfluxcols/0.5-2/m-acis52.dat
+   2-10 keV: PIMMS calculation from hard band (2-7) $9
+      1.Extract hard band
+         % awk -f h27.awk c-csc3+ffab.dat > acisfluxcols/2-10/c-acis27h.dat
+	   awk -f h27.awk m-csc3+ffab.dat > acisfluxcols/2-10/m-acis27h.dat
+      2.Convert into .xco using nh = 0 (column density already considered into these flux values)
+         % cd acisfluxcols/2-10 
+	 % awk -f pimms_acis27-210.awk c-acis27h.dat > c-acis27h.xco
+	   awk -f pimms_acis27-210.awk m-acis27h.dat > m-acis27h.xco
+      3.Run xco files in pimms
+         % /applications/pimms/pimms
+	 PIMMS > @~/gdrive/jmu/astrores/su13/newdata_2xmm+csc/csc/acisfluxcols/2-10/c-acis27h.xco
+	 % /applications/pimms/pimms
+	 PIMMS > @~/gdrive/jmu/astrores/su13/newdata_2xmm+csc/csc/acisfluxcols/2-10/m-acis27h.xco
+      4.Convert output into column of only flux values (not log, no column title)
+         % awk -f ../../../log2fluxnotitle.awk m-acis27h.log > m-acis210.dat
+	   awk -f ../../../log2fluxnotitle.awk c-acis27h.log > c-acis210.dat
+   0.5-10 keV: Add two above
+      1.Convert 0.5-2 and 2-10 .dat into strings and combine into one file
+         % cd ..
+	   mkdir 0.5-10
+	   awk -f ../../c2r.awk 0.5-2/c-acis52.dat > 0.5-10/c-acis52.strings
+	   awk -f ../../c2r.awk 0.5-2/m-acis52.dat > 0.5-10/m-acis52.strings
+	   awk -f ../../c2r.awk 2-10/c-acis210.dat > 0.5-10/c-acis210.strings
+	   awk -f ../../c2r.awk 2-10/m-acis210.dat > 0.5-10/m-acis210.strings
+	 add string from 2-10 after string already in 0.5-2 file
+	 rename new file and delete other one
+      2.Convert from strings to .dat file: first column is soft and second column is hard
+         % awk -f ../../c2r.awk 0.5-10/c-acis510.strings > 0.5-10/c-acis510s.dat
+	   awk -f ../../c2r.awk 0.5-10/m-acis510.strings > 0.5-10/m-acis510s.dat
+	 delete strings files
+      3.Add columns together
+         % cd 0.5-10
+	   awk '{print $1 + $2}' c-acis510s.dat > c-acis5-10.dat
+	   awk '{print $1 + $2}' m-acis510s.dat > m-acis5-10.dat
++HRC: PIMMS calculation for each short range, add for big range
+   Extract HRC column
+      % cd ../..
+        awk '$1 !~ "name" {print $13}' c-csc3+ffab.dat > hrcfluxcols/c-csc3+hrc.dat
+	awk '$1 !~ "name" {print $13}' m-csc3+ffab.dat > hrcfluxcols/m-csc3+hrc.dat
+   0.5-2 keV & 2-10 keV: Use same pimms, copy the xco files and then make changes
+      1.Create pimms files
+         % cd hrcfluxcols
+           awk -f pimms-hrc52.awk c-csc3+hrc.dat > 0.5-2/c-csc3+hrc52.xco
+           awk -f pimms-hrc52.awk m-csc3+hrc.dat > 0.5-2/m-csc3+hrc52.xco
+         copy these files into 0.5-10 and change the output flux range
+      2.Run through pimms
+         % /applications/pimms/pimms
+	 PIMMS > @~/gdrive/jmu/astrores/su13/newdata_2xmm+csc/csc/hrcfluxcols/0.5-2/c-csc3+hrc52.xco
+	 PIMMS > @~/gdrive/jmu/astrores/su13/newdata_2xmm+csc/csc/hrcfluxcols/0.5-2/m-csc3+hrc52.xco
+	 PIMMS > @~/gdrive/jmu/astrores/su13/newdata_2xmm+csc/csc/hrcfluxcols/2-10/c-csc3+hrc210.xco
+	 PIMMS > @~/gdrive/jmu/astrores/su13/newdata_2xmm+csc/csc/hrcfluxcols/2-10/m-csc3+hrc210.xco
+      3.Extract data column from logs
+         % awk -f ../../log2fluxnotitle.awk 0.5-2/c-csc3+hrc52.log > 0.5-2/c-csc3+hrc52.dat
+	   awk -f ../../log2fluxnotitle.awk 0.5-2/m-csc3+hrc52.log > 0.5-2/m-csc3+hrc52.dat
+	   awk -f ../../log2fluxnotitle.awk 2-10/c-csc3+hrc210.log > 2-10/c-csc3+hrc210.dat
+	   awk -f ../../log2fluxnotitle.awk 2-10/m-csc3+hrc210.log > 2-10/m-csc3+hrc210.dat
+   0.5-10 keV: add two above
+      1.Convert into strings
+         % awk -f ../../c2r.awk 0.5-2/c-csc3+hrc52.dat > 0.5-10/c-csc3+hrc52.strings
+	   awk -f ../../c2r.awk 0.5-2/m-csc3+hrc52.dat > 0.5-10/m-csc3+hrc52.strings
+	   awk -f ../../c2r.awk 2-10/c-csc3+hrc210.dat > 0.5-10/c-csc3+hrc210.strings
+	   awk -f ../../c2r.awk 2-10/m-csc3+hrc210.dat > 0.5-10/m-csc3+hrc210.strings
+      2.Table with two columns put 2-10 at end of .5-2 file, convert back to .dat
+	 % awk -f ../../c2r.awk 0.5-10/c-csc3+hrc52.strings > 0.5-10/c-csc3+hrc510s.dat
+	   awk -f ../../c2r.awk 0.5-10/m-csc3+hrc52.strings > 0.5-10/m-csc3+hrc510s.dat
+      3.Add together columns
+	 % awk '{print $1 + $2}' 0.5-10/m-csc3+hrc510s.dat > 0.5-10/m-csc3+hrc5-10.dat
+	   awk '{print $1 + $2}' 0.5-10/c-csc3+hrc510s.dat > 0.5-10/c-csc3+hrc5-10.dat
++Combine information from HRC and ACIS into one single flux column for each range /su13/newdata_2xmm+csc/csc
+   % cd ..
+     mkdir fluxcols
+     cd fluxcols
+     mkdir 0.5-2
+     mkdir 0.5-10
+     mkdir 2-10
+     mkdir 0.5-2/input
+     mkdir 0.5-10/input
+     mkdir 2-10/input
+   1. Put files from ACIS and HRC into above input folders
+   2. Convert all to strings
+      % mkdir 0.5-2/strings
+        mkdir 0.5-10/strings
+        mkdir 2-10/strings
+        awk -f ../../c2r.awk 0.5-2/input/c-acis52.dat > 0.5-2/strings/c-acis52.strings
+        awk -f ../../c2r.awk 0.5-2/input/m-acis52.dat > 0.5-2/strings/m-acis52.strings
+        awk -f ../../c2r.awk 0.5-2/input/c-hrc52.dat > 0.5-2/strings/c-hrc52.strings
+        awk -f ../../c2r.awk 0.5-2/input/m-hrc52.dat > 0.5-2/strings/m-hrc52.strings
+        awk -f ../../c2r.awk 2-10/input/c-acis210.dat > 2-10/strings/c-acis210.strings
+        awk -f ../../c2r.awk 2-10/input/m-acis210.dat > 2-10/strings/m-acis210.strings
+        awk -f ../../c2r.awk 2-10/input/c-hrc210.dat > 2-10/strings/c-hrc210.strings
+        awk -f ../../c2r.awk 2-10/input/m-hrc210.dat > 2-10/strings/m-hrc210.strings
+        awk -f ../../c2r.awk 0.5-10/input/c-acis5-10.dat > 0.5-10/strings/c-acis5-10.strings
+        awk -f ../../c2r.awk 0.5-10/input/m-acis5-10.dat > 0.5-10/strings/m-acis5-10.strings
+        awk -f ../../c2r.awk 0.5-10/input/c-hrc5-10.dat > 0.5-10/strings/c-hrc5-10.strings
+        awk -f ../../c2r.awk 0.5-10/input/m-hrc5-10.dat > 0.5-10/strings/m-hrc5-10.strings
+   3. Create dual column combination file
+      a. Put HRC after string in each ACIS file
+      b. Delete HRC file
+      c. Rename ACIS file to *-#.strings
+      d. Convert strings to columns
+         % mkdir 0.5-2/2cols
+           mkdir 0.5-10/2cols
+           mkdir 2-10/2cols
+           awk -f ../../c2r.awk 0.5-2/strings/c-52.strings > 0.5-2/2cols/c-52.dat
+           awk -f ../../c2r.awk 0.5-2/strings/m-52.strings > 0.5-2/2cols/m-52.dat
+           awk -f ../../c2r.awk 2-10/strings/c-210.strings > 2-10/2cols/c-210.dat
+           awk -f ../../c2r.awk 2-10/strings/m-210.strings > 2-10/2cols/m-210.dat
+           awk -f ../../c2r.awk 0.5-10/strings/c-5-10.strings > 0.5-10/2cols/c-5-10.dat
+           awk -f ../../c2r.awk 0.5-10/strings/m-5-10.strings > 0.5-10/2cols/m-5-10.dat
+
+== 7/19 ==
+~ CSC Finalize Flux values
+-----------not done
++Combine ACIS and HRC columns into single column
+   4. Add two columns together finish this step
+      % awk -f ?.awk 0.5-2/2cols/c-52.dat > 0.5-2/combined/c-csc52.dat
+        awk -f 0.5-2/2cols/m-52.dat > 0.5-2/combined/m-csc52.dat
+        awk -f 0.5-10/2cols/c-5-10.dat > 0.5-10/combined/c-csc-5-10.dat
+        awk -f 0.5-10/2cols/m-5-10.dat > 0.5-10/combined/m-csc-5-10.dat
+        awk -f 2-10/2cols/c-210.dat > 2-10/combined/c-csc210.dat
+        awk -f 2-10/2cols/m-210.dat > 2-10/combined/m-csc210.dat
+not done------------
++Use ACIS values for each observation. Those without ACIS, find online
+   http://cxc.harvard.edu/cda/tools.html > webchaser = http://cda.harvard.edu/chaser/
+   In control and maser list, four objects without ACIS but with HRC, so find ACIS values
+   NGC 4156 (control) no results, use result from PIMMS hrc extension
+   NGC 4507 (control)
+      2001: 10.209778 cps (1410946 counts per 138.2 ks)
+         G. Matt et al. 2004: flux(2-10) = 2.37×10^−11 erg... http://www.aanda.org/articles/aa/pdf/2004/26/aa0045-04.pdf
+      2010: 0.816138 cps (32316 counts per 39.6 ks)
+      Overall: 8.11733408324 cps (1443262 counts per 177.8 ks)
+      PIMMS flux: NH = 7.04E+20 (heasoft), gamma = 1.7, input range = 0.20 - 8.86 (http://cxc.cfa.harvard.edu/cdo/about_chandra/)
+         0.5-2  = 2.894E-11
+	 2-10   = 5.279E-11
+	 0.5-10 = 8.173E-11
+   NGC 4151 (maser)
+      12/04/1999: 3217      1.13
+      03/05/2000: 536228    47.44
+      03/06/2000: 17086	    6.23
+      03/07/2000: 348494    27.69
+      05/07/2002: 693256    90.82
+      05/09/2002: 1138886   153.11
+      07/02/2002: 1083986   83.59
+      03/19/2007: 619139    49.23
+      07/21/2007: 724072    49.34
+      03/27/2008: 183817    64.72
+      03/29/2008: 317756    117.12
+      Totals:	  5665937   690.42
+      Overall cps: 8.20650763303
+      PIMMS flux: NH = 2.30E+20 (heasoft), gamma = 1.7, input range = 0.20 - 8.86
+         0.5-2	= 2.633E-11
+	 2-10	= 4.803E-11
+	 0.5-10 = 7.436E-11
+   NGC 6240 (maser)
+      2001-07-29: 409905    36.69
+      2006-05-11: 2035683   141.23
+      2006-05-16: 2279728   157.0
+      2011-05-31: 977380    145.36
+      Totals:	  5702696   480.28
+      Overall cps: 11.8736903473
+      PIMMS flux: NH = 4.87E+20 (heasoft), gamma = 1.7, input range = 0.20 - 8.86
+         0.5-2	= 4.059E-11
+	 2-10	= 7.404E-11
+	 0.5-10 = 1.146E-10
+
+
+-- Week 10 To do --
+*Finalize energy range for CSC and 2XMM and likewise flux values
+*Calculate Luminosities based on new fluxes
+*Plot combined CSC and 2XMM flux and luminosity data
+*Pattern of variability between 2xmm and csc for control vs maser groups
+*Simulate flux > luminosity data
+   1. fit curve
+   2. random numbers
+   3. calculate luminosity from flux
+*Work more on presentation or paper
+awk -f ./comblines/c2r.awk ./data/toptables/2xmm/c2x7.dat > ./data/toptables/csc/c2x7.strings
+     awk -f ./comblines/c2r.awk ./data/toptables/2xmm/m2x7.dat > ./data/toptables/csc/m2x7.strings
+
+Week 11
+== 7/22 ==
+~ CSC + 2XMM
++Combine ACIS and HRC values into one flux column for CSC
+   % cd su13/newdata_2xmm+csc/csc/fluxcols
+     mkdir 0.5-2/1col
+     mkdir 2-10/1col
+     mkdir 0.5-10/1col
+     awk -f hrc+acis.awk 0.5-2/2cols/c-52.dat > 0.5-2/1col/c-52.dat
+     awk -f hrc+acis.awk 0.5-2/2cols/m-52.dat > 0.5-2/1col/m-52.dat
+     awk -f hrc+acis.awk 2-10/2cols/c-210.dat > 2-10/1col/c-210.dat
+     awk -f hrc+acis.awk 2-10/2cols/m-210.dat > 2-10/1col/m-210.dat
+     awk -f hrc+acis.awk 0.5-10/2cols/c-5-10.dat > 0.5-10/1col/c-5-10.dat
+     awk -f hrc+acis.awk 0.5-10/2cols/m-5-10.dat > 0.5-10/1col/m-5-10.dat
++Combine fluxes into table with other object information using strings methods
+   % awk -f ../../c2r.awk 0.5-2/1col/c-52.dat > 0.5-2/1col/c-52.strings
+     awk -f ../../c2r.awk 0.5-2/1col/m-52.dat > 0.5-2/1col/m-52.strings
+     awk -f ../../c2r.awk 2-10/1col/c-210.dat > 2-10/1col/c-210.strings
+     awk -f ../../c2r.awk 2-10/1col/m-210.dat > 2-10/1col/m-210.strings
+     awk -f ../../c2r.awk 0.5-10/1col/c-5-10.dat > 0.5-10/1col/c-5-10.strings
+     awk -f ../../c2r.awk 0.5-10/1col/m-5-10.dat > 0.5-10/1col/m-5-10.strings
+     awk -f ../../c2r.awk ../c-csc3+ffab.dat > ../c-csc3+ffab.strings
+     awk -f ../../c2r.awk ../m-csc3+ffab.dat > ../m-csc3+ffab.strings
+   Add all three of each into *ffab.strings and reconvert to single table with all flux columns, delete individual string files
+     awk -f ../../c2r.awk ../c-csc3+ffab.strings > ../c-csc3+fluxes.dat
+     awk -f ../../c2r.awk ../m-csc3+ffab.strings > ../m-csc3+fluxes.dat
+   Use Topcat to adjust column position for readability
+~ Maser list values are wrong
++Fix maser list
+   Accommodate for negative values and no $11 in space names: to finalmaserlist.awk
+   % awk -f finalmaserlist.awk maserlist2012.txt > newmasers.csv
+   All maser lists are wrong except for newmasers ones, delete them
++Redo every maser crossmatch
+   Add new rows individually to old tables, rename (*-new.*)
+   RBSC = 14 matches (13 prior) su13/tables/rass/dat/mrb-new.dat
+   RFSC = 10 matches (9 prior) su13/tables/rass/dat/mrf-new.dat
+   Combine RBSC and RFSC new tables into new mrass table > /tables/rass/dat/mrass-new.dat
+   2XMMi-DR3 = 49 matches same as before
+   Swift-BAT = 33 same
+   CSC = 28 same
+   Integral = 6 (5 prior) 
++Redo flux for RBSC, RFSC, Integral
+~ Margins for RASS
++Do 70" crossmatch and save only separation and poserr columns into su13/margins/rass
++Average position error is 13.5335. Make histogram of separation values superimposed with sep*13.5335/poserr
+
+== 7/23 ==
+~ RASS search radius
++70" crossmatch
+   Extract separation and position error su13/margins/rass/rass-allsurvey-70sep+poserr.dat
++Attempt to create error-adjusted histogram su13/
+   su13/margins/sepadj-poserr-worksbut.awk converts to something that looks good but the formula is questionable
+   su13/margins/sepadj-poserr.awk is work in progress
+   IDL histogram from two data sets from su13/margins/ahistmargin.pro
+   output has been going to uhrass.eps
+~ Rewrite abstract
++su13/presentation/abstract
+
+== 7/24 ==
+~ CSC + 2XMM
++Combined table format:
+name ra dec z csc_flux_(0.5-2) 2xmm_flux_(0.5-2) csc_flux_(2-10) 2xmm_flux_(2-10) csc_flux_(0.5-10) 2xmm_flux_(0.5-10) csc_name 2xmm_iauname csc_mjds 2xmm_mjds
++Make new table for each catalog which includes only vital columns (three calculated flux columns)
+   CSC, create new table as: name ra dec z csc_flux_(0.5-2) csc_flux_(2-10) csc_flux_(0.5-10) csc_name csc_mjds
+      All these columns are already in a table
+      1. Convert flux to flog & Copy to strings
+         % awk -f cscflux2flog.awk m-csc3+fluxes.dat > m-csc3+flogs.dat
+           awk -f cscflux2flog.awk c-csc3+fluxes.dat > c-csc3+flogs.dat
+           cd newdata_2xmm+csc/csc
+           awk -f ../c2r.awk c-csc3+flogs.dat > c-csc3+flogs.strings
+           awk -f ../c2r.awk m-csc3+flogs.dat > m-csc3+flogs.strings
+      3. Edit strings files as necessary to have format listed above, then reconvert to .dat files in new folder
+         % cd ..
+           awk -f c2r.awk csc/c-csc3+flogs.strings > combined/c-csc3-combine.dat
+           awk -f c2r.awk csc/m-csc3+flogs.strings > combined/m-csc3-combine.dat
+      Add # and rename to .asc file so it can be used in topcat, then import into topcat
+   2XMM, create new table as: name ra dec z 2xmm_flux_(0.5-2) 2xmm_flux_(2-10) 2xmm_flux_(0.5-10) 2xmm_iauname 2xmm_mjds
+      These fluxes are not combined together in any table: two tables exist for each small range 
+      1. Convert all six tables into strings and combine into new strings file with relevant information
+         % cd 2xmm
+	   awk -f ../c2r.awk 0.5-2/m-src2x7_52-flog.dat > 0.5-2/m-src2x7_52-flog.strings
+	   awk -f ../c2r.awk 0.5-2/c-src2x7_52-flog.dat > 0.5-2/c-src2x7_52-flog.strings
+	   awk -f ../c2r.awk 2-10/m-src2x7_210table.dat > 2-10/m-src2x7_210table.strings
+	   awk -f ../c2r.awk 2-10/c-src2x7_210table.dat > 2-10/c-src2x7_210table.strings
+      2. Combine necessary columns into two files with each flux
+      3. Convert to .dat, delete strings files
+         % cd ../combined2.896
+	   awk -f ../c2r.awk c-2x7-combine.strings > c-2x7-combine.dat
+	   awk -f ../c2r.awk m-2x7-combine.strings > m-2x7-combine.dat
+      4. Add 0.5-10 keV flux row by finding the log of the addition of the 10^flog
+         % awk -f newflog.awk c-2x7-combine.dat > c-2x7-combine.asc
+	   awk -f newflog.awk m-2x7-combine.dat > m-2x7-combine.asc
+   To combine in topcat must make each file have every column
+      1. Add all five unique to other catalog at the end and use awk to input "" for each of those five columns
+         % awk -f add5.awk c-2x7-combine.asc > c-2x7-combine2.asc
+	   awk -f add5.awk c-csc3-combine.asc > c-csc3-combine2.asc
+	   awk -f add5.awk m-2x7-combine.asc > m-2x7-combine2.asc
+	   awk -f add5.awk m-csc3-combine.asc > m-csc3-combine2.asc
+      2. In topcat and, 1 not 2, 2 not 1, xor is not friendly to concatenation
+      3. Cannot concatenate 2 nots in topcat because it looks for the same format, so save files into temporary location and by hand
+      4. Concatenate "and" table with concatenated "not not" table which represents "xor"
+      5. Save into su13/newdata_2xmm+csc/combined/`good
+   Also create tables with only one flux value for each range
+      Average values when there are two, or pick the only when there is one
+      Make sure to include in code conversion from flog to flux to calculate and back to flog
+      # name ra dec z flux_(0.5-2) flux_(2-10) flux_(0.5-10) csc_name 2xmm_iauname
+         % cd +good
+	   awk -f combflog2flog.awk c-csc3+2x7.asc > c-1flog.asc
+	   awk -f combflog2flog.awk m-csc3+2x7.asc > m-1flog.asc
+      Import into topcat and resave into same slot to make spacing more readable in text editor
+
+== 7/25 ==
+~ CSC+2XMM Flux + Luminosity
++Create flux histograms
+   1. Create new folder
+      % cd ~/gdrive/jmu/astrores/su13
+        mkdir flux/2x+csc
+   2. Copy ascii files in the form of .dat into flux/2x+csc/work
+   3. Convert to strings and delete original files
+      % cd flux/2x+csc
+        awk -f ../../c2r.awk c-1flog.dat > c-1flog.strings
+        awk -f ../../c2r.awk m-1flog.dat > m-1flog.strings
+   4. Extract individual strings and title file with column title
+   5. Convert strings into .dat columns and delete original files
+      % awk -f ../../c2r.awk m-flux_52.string > m-flux_52.dat
+      	awk -f ../../c2r.awk m-flux_210.string > m-flux_210.dat
+	awk -f ../../c2r.awk m-flux_510.string > m-flux_510.dat
+	awk -f ../../c2r.awk c-flux_52.string > c-flux_52.dat
+      	awk -f ../../c2r.awk c-flux_210.string > c-flux_210.dat
+	awk -f ../../c2r.awk c-flux_510.string > c-flux_510.dat
+   6. Use ahist.pro to create histogram for each flux range
+      m-flux_52 has infinity, remove this value from file
++Convert flux to luminosity in both tables (6 flux column and 3 flux column)
+   Convert 6 column flux tables into tables with both luminosity and flux, 12 and 6 columns of flux+lum
+   1. Create new folder su13/luminosity/2x+csc/prelum
+   ----UNNECESSARY STEPS BECAUSE ORDER IS MESSED UP BUT STANDARDIZE TABLES----
+   2. Import csc and 2xmm dL tables from each respective prelum into prelum
+   3. Convert into ascii and import into topcat to create single dL list for combined lists
+      *Use and, not, not method to replicate and, xor.
+	 Go back to original 6 column merged file and convert control to csc first then 2xmm so it is same as maser
+	 Redo 3 column control table based on this so the orders match (both got deleted by accident so do both)
+	    % cd ~/gdrive/jmu/astrores/su13/newdata_2xmm+csc/combined/+good
+	      awk -f combflog2flog.awk c-csc3+2x7.asc > c-1flog.asc
+	      awk -f combflog2flog.awk m-csc3+2x7.asc > m-1flog.asc
+	    Import into topcat and resave to fix spacing
+	 Order is now BOTH - CSC - 2XMM
+	 Order of objects within each search is still not the same, cannot use this method
+   ----BACK ON ORIGINAL TASK----
+   4. Go back to SDSS and find dL from combined tables
+      *Delete dL files that were imported into su13/luminosity/2x+csc/prelum
+      *Import combined flux tables (6 column) instead
+      *Convert into dat: delete #, remove extra spaces, convert "" into void
+	 % awk -f s2c-q2void.awk c-csc3+2x7.asc > c-csc3+2x7.csv
+	   awk -f s2c-q2void.awk m-csc3+2x7.asc > m-csc3+2x7.csv
+      *Import into SDSS
+      *Use SQL to compare vs d_L table: imitate 6/26 code
+      	 SELECT cm.name, cm.ra, cm.dec, cm.z, cm.csc_flux_052, cm.xmm_flux_052, cm.csc_flux_210, cm.xmm_flux_210, cm.csc_flux_0510, cm.xmm_flux_0510, dl.d_L, cm.csc_name, cm.xmm_iauname, cm.csc_mjd, cm.xmm_mjd
+	 FROM ConstantinResearchGroup.EmilRex.Redshift_d_L dl, dl_c_2xcsc_input cm
+	 WHERE ABS(cm.z - dl.z) <= 0.000005
+      *Export as fits tables, control group needs 5 and masers need 2
+   5. Individually identify dL values for those with z >= 1 or z <= 0
+      *Import into topcat, remove all but ra,dec,dl and do OR crossmatch with original table
+      *Save as .asc file, remove # and change extension to .dat
+
+== 7/26 ==
+      *Use NED to find each objects dL
+   6. Use AWK code to create four new tables
+      *The final results should be: 
+         *-2xcsc-fl6.dat = Table with all fluxes and all luminosities
+	 *-2xcsc-fl3.dat = Table with averaged fluxes and averaged luminosities
+      *First create first set of tables
+	 % awk -f 6flux2flum.awk c-2xcsc-dl.dat > ../c-2xcsc-flum12.dat
+	   awk -f 6flux2flum.awk m-2xcsc-dl.dat > ../m-2xcsc-flum12.dat
+      *Fix spacing and check using topcat (#, topcat, save back, del #)
+      *Combine columns
+	 % cd ..
+	   awk -f 12flum2flum6.awk c-2xcsc-flum12.dat > c-2xcsc-flum6.dat
+	   awk -f 12flum2flum6.awk m-2xcsc-flum12.dat > m-2xcsc-flum6.dat
+      *Fix spacing and check using topcat (#, topcat, save back, del #)
++Create luminosity histograms
+   1. Extract luminosity data
+      *Convert 3 lum columns from 6 column file into strings
+         % mkdir columns
+	   awk -f ../c2r.awk c-2xcsc-flum6.dat > columns/c-2xcsc-flum6.strings
+	   awk -f ../c2r.awk m-2xcsc-flum6.dat > columns/m-2xcsc-flum6.strings
+      *Extract individual strings into new files
+         Delete .strings
+      *Convert back to columns
+         % cd columns
+	   awk -f ../../c2r.awk c-lum052.string > c-lum052.dat
+	   awk -f ../../c2r.awk c-lum210.string > c-lum210.dat
+	   awk -f ../../c2r.awk c-lum0510.string > c-lum0510.dat
+	   awk -f ../../c2r.awk m-lum052.string > m-lum052.dat
+	   awk -f ../../c2r.awk m-lum210.string > m-lum210.dat
+	   awk -f ../../c2r.awk m-lum0510.string > m-lum0510.dat
+	 Delete .string files
+   2. Run through IDL script: su13/luminosity/2x+csc/2xcsc-*.eps
+      0.5-2 has illegal infinity value: delete this value from column
+
+Week 11 To do
+*Work on presentation
+*Re-plot other graphs in presentation to make them more readable in powerpoint. Check axes (one graph was wrong)
+*Calculate Luminosities based on new CSC and 2XMM fluxes
+*Plot combined CSC and 2XMM flux and luminosity data
+*Pattern of variability between 2xmm and csc for control vs maser groups
+*Simulate flux > luminosity data
+   1. fit curve
+   2. random numbers
+   3. calculate luminosity from flux
+
+Week 11 Summary
+*Spent more time with RASS crossmatch, got more detailed data
+*Plotted improved graphs for RASS data
+*Combined HRC and ACIS data for CSC to have one flux value for each energy range of each object
+*Merged 2XMM and CSC tables
+*Plotted new flux histograms for each energy range of merged tables
+*Calculated new luminosities for combined tables
+*New IDL code for histograms that ouputs more readable graphs plus a legend
+*Plotted new luminosity histograms for each energy range of merged tables
+*Worked on abstract
+
+== 7/29 - 7/31 ==
+~ Presentation
++New graphs
++Find average luminosity and flux values
+   % cd ~/gdrive/jmu/astrores/su13/luminosity
+     awk -f ../average.awk 2x+csc/columns/m-lum0510.dat > 40.9901
+     awk -f ../average.awk 2x+csc/columns/c-lum0510.dat > 41.2794
+     awk -f ../average.awk integral/mlum.dat > 43.0466
+     awk -f ../average.awk integral/clum.dat > 43.6144
+     awk -f ../average.awk rass/mlum.dat > 40.7803
+     awk -f ../average.awk rass/clum.dat > 42.1056
+     awk -f ../average.awk swift-bat/mlum.dat > 43.0219 
+     awk -f ../average.awk swift-bat/clum.dat > 43.4606
+   % cd ~/gdrive/jmu/astrores/su13/flux
+     awk -f ../average.awk rass/mrasslog.dat > -11.9322
+     awk -f ../average.awk rass/crasslog.dat > -11.8502
+     awk -f ../average.awk 2x+csc/m-flux_510.dat > -12.2834
+     awk -f ../average.awk 2x+csc/c-flux_510.dat > -12.3459
+     awk -f ../average.awk integral/mlog.dat > -9.86657
+     awk -f ../average.awk integral/clog.dat > -10.4097
+     awk -f ../average.awk swift/mbatlog.dat > -10.3413
+     awk -f ../average.awk swift/cbatlog.dat > -10.5679
+~ New histograms for margins
++margins/RASS/70positions.dat: crossmatch of all surveyed against entire RASS catalog bright and faint
++/margins/ahistmarginray.pro: 
++/margins/datable3.pro
+	This combines idea from datable2.pro with actual histogram from ahistmargin.pro
+
+== 8/1 ==
+~ Patterns of variability 2XMM & CSC su13/luminosity/2x+csc/vary
++create new 12 tables with only common matches
++Find variability of objects as the luminosity difference divided by average
+   su13/luminosity/2x+csc/vary/vary.awk ((10^$13 - 10^$12) / ((10^$13 + 10^$12)/2))
+   % awk -f vary.awk m-2xcsc-overlap.dat > m-2xcsc-lumvary.dat
+     awk -f vary.awk c-2xcsc-overlap.dat > c-2xcsc-lumvary.dat
++Find average variability and variability rate in both control and maser luminosity
+   su13/luminosity/2x+csc/vary/average_vary.awk
++Create histograms of each flux value
+
+Week 12 To do
+*Work on presentation
+*Use new IDL code to further improve the remaining flux and luminosity graphs
+*Pattern of variability between 2xmm and csc for control vs maser groups
+*Simulate flux > luminosity data
+   1. fit curve
+   2. random numbers
+   3. calculate luminosity from flux
+
+Week 12 Summary
+*Worked on and presented presentation for REU symposium
+*Used new IDL code to perfect flux and luminosity graphs
+*Examined patterns of variability for luminosity in XMM and CSC
+
+I examined variability (difference with respect to total luminosity) and variability rate (variability divided by time). Masers were generally more variable by a factor of two and on average increased in luminosity while the non-maser group decreased in luminosity.
+
+The variability rates seem to act like a logarithmic distribution which made it extremely difficult to interpret because both distributions had both positive and negative values. The non-maser group had a vastly wider distribution due to outliers having magnitudes hundreds of times greater than other values. As such, the average variability rate in the control group had a magnitude much greater than that in the maser group (though still negative). In order to circumvent the issue of finding an average I used the median, where as expected the maser group's median variability rate had a considerably larger magnitude (in addition to being positive while the non-masers median was negative).
+
+Of course this still does not resolve the inability to form a sensible plot. Even with 200 bins the values around zero still dominate the vast majority. A thought would be to formulate one logarithmic plot for positive values and one for negative values and lay them side by side, but this doesn't represent a coherent x-axis. Using linear axes with 800 bins and zooming in on only the values very close to zero gives the closest thing to a meaningful plot.
+
+
+Week 13
+== 8/5 ==
+~ Variability rates
++su13/luminosity/2x+csc/vary/columns/sqrtneg.awk
+   find square root of the magnitude of each object
+   Find twice (4th root) and regraph histogram as lvt510sqrt.eps
+~ Variability vs time
++Two column file with mjd on left and variability on right
+   % awk '{print $14,$10}' c-2xcsc-lumvary.dat > c-lvmjd.dat
+     awk '{print $14,$10}' c-2xcsc-lumvary.dat > c-lvmjd.dat
++Graph with idl
+   su13/luminosity/2x+csc/vary/columns/varvtime.pro & varvtime.eps
+
+== 8/6 ==
+~ Model Flux > Luminosity
++Determine d_L distribution
+   +Relationship with flux?
+      % awk '{print $7,$8}' c-2xcsc-flum6.dat > c-dlflog.dat
+        awk '{print $7,$8}' m-2xcsc-flum6.dat > m-dlflog.dat
+      Use manipulated version of varvtime.pro to graph log_e(dL) vs log_10(flux) in flog-dl.eps
+      No relationship to flux
+   +Determine distribution of dL
+      Print dl and log(dl) columns
+         % awk '{print log($8)/log(10)}' c-2xcsc-flum6.dat > c-dLog.dat
+           awk '{print log($8)/log(10)}' m-2xcsc-flum6.dat > m-dLog.dat
+	   awk '{print $8}' c-2xcsc-flum6.dat > c-dl.dat
+           awk '{print $8}' m-2xcsc-flum6.dat > m-dl.dat
+      Find average values
+         % awk -f ../../average.awk c-dLog.dat > 1.7737
+           awk -f ../../average.awk m-dLog.dat > 1.59781
+	   awk -f ../../average.awk c-dl.dat > 94.8007
+           awk -f ../../average.awk m-dl.dat > 394.723
+      Plot Histograms (manipulated version of ahistlum.pro)
+         Delete line 16: 21508 because it is ruining plot for *dl.dat
+	 Clearly logarithmic so delete *dl.dat and dl*.eps files
+      Fit Gaussian
++Fit curve to each
+   Model Gaussian over log graph using calculated mean and find sigma (trial and error?)
+
+== 8/7 ==
++MPFIT tools: su13/simulation/curve-fitting
++Make ahist file without any plotting, just save data su13/simulation/ahistdata.pro
+   This includes GAUSSFIT outputs?
+
+
+== 9/16 ==
+Week 13 To do
+*Establish a better method to interpret variability rates
+*Simulate flux > luminosity data
+   1. fit curve
+   2. generate numbers randomly under curve
+   3. calculate luminosity from all flux values using random luminosity distances
+   4. Create new histogram
+
+
+== September - 10/25 ==
+~ Old File Information: /su13/simulation
+ahistdata.pro: Saves histogram information in flux/????.sav
+/curve-fitting: Fit curve using MPFIT folder
+   MPFIT files must be compiled prior to curve fitting: mpfit.rpo, mpfitexpr.pro, mpfitfun.pro
+   gauss1.pro: Used to generate gaussian function
+   mppoly.pro, mppoly2.pro: Second one used for fit
+/montecarlo: Monte Carlo Simulate under curve
+   
+~ Flux Simulation
++Use ahistdata.pro to get flux histogram information from 2xmm+csc 2-10 keV range (switch from 18 to 16 bins)
+   flux/flvar-2xcsc-210.sav
++Use curve-fitting/mppoly2 to fit to above flux data
+   curve-fitting/flux/2xcsc210-polymaser.eps
+   curve-fitting/flux/2xcsc210-polycontrol.eps
+   curve-fitting/mppoly2-2xcsc-210.sav
++Monte Carlo using those values
+   % cd ~/gdrive/jmu/astrores/su13/simulation/montecarlo/flux/2xc210
+     gcc 2xc210-mgrf.c -o 2xc210-mgrf.out
+     gcc 2xc210-cgrf.c -o 2xc210-cgrf.out
+     ./2xc210-mgrf.out
+     ./2xc210-cgrf.out
+   Keep original files in old spot two directories up
+   Add in new fit coefficients
+   Fix array length in each of these files
++Plot graph with monte carlo data + original data + fit
+   montecarlo/ahistsim.pro
+   Does not fit properly
+
+== 10/28 - 11/1 ==
+~ Flux Simulation
++simulation/montecarlo/flux/2xc210 Three data set graphs, work through errors
+   Include mppoly2 into ahistsim to fix x-axis scaling issue. works great
+   Control Data chopped off at a certain height, fix overflow in C code and regenerate data
+      Fixed chop problem but now uneven fit...???
+   Original histograms are not percentages
+      This was problem in both.
+         Redo for yplot instead of hist in mppoly
+	 Use new fit values in both c codes
+	 Regenerate monte carlo values and replot
+   Maser and Control on same scale as each other but not as their simulations
+      Set number of bins the same between codes, now they fit
+   Control data simulation is not fitting well, chunks sticking out
+      Redo simulation with everything fixed as mentioned above, chunks are minimized but still there slightly
+
++Swift flux
+   Change .dat, .sav, and .eps files in ahistdata, mppoly2, and ahistsim
+   Do different x ranges for maser and control because -9 to -9.5 fits weird
+   Overflow error again in IDL...??? only for masers
+   Control group simulation cuts off well before end of bins (bins have 0), so bring bins from 7 to 5
+~~~ Simulated data in both swift and 2-10 seems to be shifted to the left...???
+
++2-10 dL
+   Make all necessary changes as was done for swift fluxdll
+   start on 2-10 get some...
+
+== November ==
++NEW simulation/ahistdata2.pro now uses readcol
++Swift Maser group needs to be redone with fixed code
+   Data for mppoly: simulation/flux/flvar-swift.sav
+   Issues with graph, start from beginning
+   ahistdata2.pro > simulation/flux/swift-initialfluxvars.sav
+   mppoly2.pro > simulation/curve-fitting/fit-swift2.sav && simulation/curve-fitting/flux/swift/swift-flux***.eps
+      Had to manipulate array sizes to get curve into proper area
+         x = -findgen(100)*(2.5/100) - 9.25
+         xn = -findgen(100)*(2.5/100) - 9.7
+   mppoly output is same as before, so reuse the same C code.
+   ahistsim2.pro: use .dat's from c code and simulation/flux/flvar-swift.sav
+      works fine just make sure the right amount of bins are being used to properly scale things vertically
+      also reinput mppoly code with above numbers
+
+~ dL (go back to fluxes later)
++2-10 dL
+   mppoly2 output > simulation/dl/dlvar-210.sav
+   Initial fit graphs are saved in curve-fitting/dl
+   Data from these fits using mppoly2 are input into c codes
+      montecarlo/dl/210/210dl-*grf.c > .out
+   OVERFLOW IN C CODE?? LONG DOUBLE TOO BIG??? DO THIS X = (.3*rand()/RAND_MAX)*10 instead of 3*rand()/RAND_MAX
++Swift dL: all done as 2-10 and it worked perfect
+   luminosity/swift-bat/pre-lum/mdlog.dat
++RASS dL: 
+   luminosity/rass/pre-lum/cr-dlog.dat
+   > ahistdata2 > simulation/dl/dlvar-rass.sav
+   > mppoly2 > gdrive/jmu/astrores/su13/simulation/curve-fitting/fit-rass.sav
+     x = findgen(100)*(2.9/100)-0.3
+     xn = findgen(100)*(2.8/100)
+     Maser data is:      0.020980978     0.073069578     0.056399424   -0.035831687
+     Control data is:     -0.026015469     -0.13514401      0.32375830     -0.10163618
+   > rass-cgrfs.(c > out > dat)
+   > ahistsim2
+     control 4 bins add 15 vertically
++Integral dL:
+   Maser data is:       0.99779845      -2.0922585       1.5159574     -0.35073568
+   Control data is:       0.22046256     -0.63305124      0.53677342     -0.12302010
+   Maser goes from 0.9 - 2.2
+   Control Goes from 1 - 2.5
+
+~ Flux for RASS and Integral
++Integral flux:
+   ahistdata2 > simulation/flux/fluxvars1-int.sav
+   Maser data is:       -247.20496      -71.116261      -6.7965178     -0.21583537
+   Control data is:       -154.91131      -42.868605      -3.9401767     -0.12034062
++RASS flux
+   Maser data is:        74.140471       19.568467       1.7130351     0.049689343
+   Control data is:        27.528080       7.6144799      0.69605276     0.020985180
+
+
+
+     == Simulations Completed ==
+                       Flux   dL    Lum
+RASS		       		x     x		
+2xcsc (2-10 keV)        x     x		
+Swift (14-195 keV)      x     x		
+Integral      			x     x		
+
+
+
+     == Creating presentation ==
+~ Combine flux + dl to make sure it looks like luminosity
++col+col.c: use this file to combine dl and flux files into one luminosity file
++Average values ave-val.c
+	int-lum-c = 43.48
+	int-lum-m = 43.1
+	210-lum-c = 40.53
+	210-lum-m = 40.28
+	rass-lum-c = 41.67
+	rass-lum-m = 40.51
+	swift-lum-c = 43.25
+	swift-lum-m = 42.83
+	
+~ Simulate luminosities for masers and control
+1. ahistdata2.pro  Histogram data the actual data
+2. mppoly2.pro     Fit to histogram data
+	210:
+		Maser data is:        232.97078      -18.208142      0.47286372   -0.0040791795
+		Control data is:        85.900018      -6.7780182      0.17743572   -0.0015399596
+		x = findgen(100)*0.06 + 37
+		xn = findgen(100)*0.07 + 37
+	int:
+		Maser data is:       -63.322674      0.63575378     0.073324697   -0.0012510974
+		Control data is:        2523.2298      -178.48132       4.2058150    -0.033015917
+		x = findgen(100)*0.015 + 42
+		xn = findgen(100)*0.025 + 42
+	rass:
+		Maser data is:        70.091655      -5.7104494      0.15371379   -0.0013670982
+		Control data is:        290.97365      -21.927930      0.54940044   -0.0045754039
+		x = xn = findgen(100)*0.06 + 38
+	swift:
+		Maser data is:        1022.0836      -73.492138       1.7596358    -0.014028189
+		Control data is:        1672.9007      -119.02260       2.8202322    -0.022254498
+		x = findgen(100)*0.04 + 40.5
+		xn = findgen(100)*0.04 + 41
+3. *-*grf.c        Create these files with fit formula and simulate data
+	data simulated: catalog-lumsim-*.dat
+4. ahistsim2.pro   Graph each simulation
+
+
+~ Invent column density distributions for maser and control based on papers
+http://adsabs.harvard.edu/abs/2007A%26A...462...57S
+http://adsabs.harvard.edu/abs/2009A%26A...500..999A
++su13\simulation\montecarlo\lumfromdlflux\lvnh this folder deals with finding the relationship between luminosity and nh based on two publications
+	lvnh.dat has total l v nh in proper format
++MASERS
+	✓Upload each maser luminosity table into sdss
+	✓Crossmatch against maserlist to identify maser number
+	✓Crossmatch against ConstantinResearchGroup.EmilRex.Master_Maser to add maser lum
+	✓Export table of x-ray lum + maser lum
+	✓Create column files xlum and mlum with only meaningful values
+	Create C-code that decides NH from maser lum
+	Associate each maser lum with NH using code
++CONTROL
+	Associate each x-ray lum with NH
+
+	
+	
+~ Combine column densities with luminosities in pimms
++NH
+	Came up with maser and control distributions
+	Truncate to 1000 values to be pimms friendly
+
+
+~ Put everything into powerpoint
+
+~ Determine how to print, Fedex Office will be roughly $50
+
+
+
+
+
+
+
+
+
+
+
+
+

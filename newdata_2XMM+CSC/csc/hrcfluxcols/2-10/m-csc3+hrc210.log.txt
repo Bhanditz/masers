@@ -1,0 +1,171 @@
+! PIMMS > from flux ergs 0.1-10
+! PIMMS > inst flux ergs 2-10
+! PIMMS > mo po 1.7 0
+! PIMMS > go 0.0
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+  (Internal model normalization =  0.000E+00)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 0.0
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+  (Internal model normalization =  0.000E+00)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 0.0
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+  (Internal model normalization =  0.000E+00)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 0.0
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+  (Internal model normalization =  0.000E+00)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 0.0
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+  (Internal model normalization =  0.000E+00)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 0.0
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+  (Internal model normalization =  0.000E+00)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 0.0
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+  (Internal model normalization =  0.000E+00)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 0.0
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+  (Internal model normalization =  0.000E+00)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 0.0
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+  (Internal model normalization =  0.000E+00)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 0.0
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+  (Internal model normalization =  0.000E+00)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 0.0
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+  (Internal model normalization =  0.000E+00)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 0.0
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+  (Internal model normalization =  0.000E+00)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 0.0
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+  (Internal model normalization =  0.000E+00)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 1.70999E-11
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  1.710E-11 ergs/cm/cm/s
+  (Internal model normalization =  2.143E-03)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  8.745E-12 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 0.0
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+  (Internal model normalization =  0.000E+00)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 0.0
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+  (Internal model normalization =  0.000E+00)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 0.0
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+  (Internal model normalization =  0.000E+00)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 0.0
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+  (Internal model normalization =  0.000E+00)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 0.0
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+  (Internal model normalization =  0.000E+00)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 0.0
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+  (Internal model normalization =  0.000E+00)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 0.0
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+  (Internal model normalization =  0.000E+00)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 0.0
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+  (Internal model normalization =  0.000E+00)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 0.0
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+  (Internal model normalization =  0.000E+00)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 0.0
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+  (Internal model normalization =  0.000E+00)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 0.0
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+  (Internal model normalization =  0.000E+00)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 0.0
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+  (Internal model normalization =  0.000E+00)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 6.56243E-14
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  6.562E-14 ergs/cm/cm/s
+  (Internal model normalization =  8.224E-06)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  3.356E-14 ergs/cm/cm/s
+! PIMMS > mo po 1.7 0
+! PIMMS > go 0.0
+* For power law model with photon index = 1.7000; NH =  0.000E+00
+   and a flux (      0.100-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+  (Internal model normalization =  0.000E+00)
+* PIMMS predicts a flux (      2.000-     10.000keV) of  0.000E+00 ergs/cm/cm/s
+! PIMMS > exit

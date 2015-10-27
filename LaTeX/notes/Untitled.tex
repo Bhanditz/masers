@@ -1,0 +1,170 @@
+\title{The Relationship between Masers and Active Galactic Nuclei studied using Optical and X-Ray Telescope Data}
+\author{
+        Andrew Nutter\\
+        Department of Physics and Astronomy\\
+        James Madison University\\
+        Harrisonburg, VA, USA
+}
+\date{\today}
+
+\documentclass[12pt]{article}
+\usepackage{indentfirst}
+\usepackage[margin=1in]{geometry}
+
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent [very rough filler] wanted to compare masers and AGN to learn about how they are related and what masers can tell us about AGN, distance, SMBH etc. used optical and x-ray data. crossmatched the list of maser detections and control group with various surveys and looked at numbers. concluded this and that.
+\end{abstract}
+
+\section{Introduction}
+[very rough filler] hard to figure out with current understanding masers can tell us about what's happening far away and how far etc. so we look at galaxies with masers compared to those without and various spectroscopic data to understand more deeply what the masers are telling us and then we can learn about what's happening, how old, how far, etc.
+
+\paragraph{Outline}
+
+Section~\ref{methods} discusses methods. Section~\ref{results} shows results. Section~\ref{conclusion} concludes.
+
+\section{Methods}\label{methods}
+Crossmatch maser list and maser control of surveyed non-masers with X-Ray and Optical telescope survey data to learn more about what masers can tell us about AGN.
+
+\subsection{Building a Maser Control Sample}\label{control}
+The Megamaser Cosmology Project has provided a list of all 4,464 (as of the spring of 2013) surveyed galaxies\cite{surv}. This list includes all galaxies surveyed; as such it includes many duplicates as well as most of the masers. In order to effectively gather statistical data it was necessary to establish an appropriate control group, requiring removal of any duplicates as well as all detected masers.\\
+
+The first steps taken were to filter out all duplicates and then to crossmatch with the maser list in order to identify and then remove all maser detections. The raw data text file was converted into the appropriate format and duplicates were removed by name using code in the command-line programming language AWK. Below is the code used to result in 3,617 results:\\
+\\
+\underline{Code 1: Duplicate Name Removal (AWK)}
+\begin{verbatim}
+   BEGIN {OFS=","}
+   $1 ~ /Source/{print "name,ra,dec,velo"}
+   $1 !~ /Source/{
+      gsub("C-","C")
+      if ($1 != A){
+         RA = ($2 + ($3 / 60) + ($4 / 3600))*15
+         if ($5 > 0 || $5 == "+00"){
+            DEC = $5 + ($6 / 60) + ($7 / 3600)
+         }
+         if ($5 < 0 || $5 == "-00"){
+            DEC = $5 - ($6 / 60) - ($7 / 3600)
+         }
+         print $1,RA,DEC,$8
+      }
+    A = $1
+    }
+\end{verbatim}
+
+After this, duplicates were removed using another AWK code which removed duplicates according to position. The list was already sorted by right ascension, so declination values of consecutive rows were compared and if they were within ten arc seconds, only the first would be printed. The following code reduced the results to 3,485 results: \\
+\\
+\underline{Code 2: Positional Duplicate Removal (AWK)}
+\begin{verbatim}    BEGIN {OFS=","}
+    $1 ~ /Source/{print "name,ra,dec,velo"}
+    $1 !~ /Source/{
+       gsub("C-","C")
+       if ($1 != A){
+          RA = ($2 + ($3 / 60) + ($4 / 3600))*15
+          if ($5 > 0 || $5 == "+00"){
+             DEC = $5 + ($6 / 60) + ($7 / 3600)
+          }
+          if ($5 < 0 || $5 == "-00"){
+             DEC = $5 - ($6 / 60) - ($7 / 3600)
+          }
+          if (D - DEC > 0.00277 || D - DEC < -0.00277){
+             print $1,RA,DEC,$8
+          }
+       }
+       A = $1
+       D = DEC
+    }
+\end{verbatim}
+
+An SQL query then crossmatched this result with the list of all maser detections. Anything with either the same name or within 10" was considered a valid result: \\
+\\
+\underline{Code 3: Positional Crossmatch (SQL)}
+\begin{verbatim}   select
+      c.name, c.ra, c.dec, c.velo, m.name
+   from
+      maserlist2012 m, mctrl c
+   where
+      m.name = c.name OR ((m.ra-c.ra)*cos(m.dec))*((m.ra-c.ra)...
+      *cos(m.dec)) + (c.dec-m.dec)*(c.dec-m.dec) < 0.000008
+\end{verbatim}
+
+The result of this crossmatch was only 128, as opposed to the size of the maser list, which was 151. Presumably, the all-surveyed results should include each of the 151 masers. Further steps had to be taken to investigate this issue later on. The only way to increase the results to 151 masers was by an increase in radius to 36". Of the new 23 results, some were not actual matches but different galaxies entirely, so a preliminary assumption was made that some of the maser list has not been included in the "all-surveyed" list, as the radius should have accommodated for error in coordinates; rather it began including other galaxies instead. The 128 results were filtered from the list of 3,485 unique objects using the following AWK code to yield 3,357:\\
+\\
+\underline{Code 4: Filter (SQL)}
+\begin{verbatim}   select
+      c.name, c.ra, c.dec, c.velo
+   from
+      mctrl c
+   where
+      c.name NOT IN (Select name FROM allposname)
+\end{verbatim}This was then crossmatched using Code 3 manipulated to look in the SDSS DR9 spectroscopy table SpecObjAll. A total of 2,181 matches were found.\\
+
+At this point further steps were still required to confirm a more precise filtering of maser detections from the all-surveyed sample. In order to accomplish this, the prior steps were done in reverse order to ensure a comprehensive view comparing the maser list with the entire all-surveyed sample.\\
+
+The first step was to return to the long list of 4,485 all-surveyed and crossmatch it to the maser list using Code 3. 782 results were found at 10". This was repeated at 6' to acquire a new sample that would more than accommodate for any reasonable error in coordinates. 807 results were found given this very large radius. The 25 additional results were each individually interpreted by hand. Various internet resources were used such as the SDSS Navigator\cite{navigator} in order to confirm whether or not each object was a maser detection, a unique non-detection, or a duplicate. Table 1 displays this information:\\
+\\
+\underline{Table 1: Radii Gap Margin}\\
+{\scriptsize \begin{tabular}{|p{3.7cm}|p{1cm}|p{1.1cm}|p{0.6cm}|p{8cm}|}
+  \hline
+\normalsize Name & \normalsize RA & \normalsize DEC & \normalsize Velo & \normalsize Treatment \\
+ \hline 
+ \hline
+*005420-233309 & 13.5854 & -23.5525 & 9680 & Keep, unique from NGC235A \\ \hline
+0437170 & 69.3208 & 66.62833 & 770 & Exclude, J0437+6637 duplicate \\ \hline
+0508212 & 77.0883 & 17.3689 & 5049 & Ambiguous so exclude because 19.9">10" \\ \hline
+0719308+5921184 & 109.879 & 59.3551 & 3258 & Exclude, UGC3789 duplicate \\ \hline
+*091958+264455 & 139.992 & 26.7485 & 7898 & Keep, unique from IC485 \\ \hline
+*120210+351355 & 180.543 & 35.2319 & 10077 & Keep, Unique from J1202+3519 \\ \hline
+*2MASXJ11092911+2841293 & 167.371 & 28.6914 & 9847 & Keep, Unique from J1103-0052 \\ \hline
+*IC486 & 120.088 & 26.6135 & 8062 & Keep, unique from IC485 \\ \hline
+IC694 & 172.072 & 58.5507 & 3064 & Exclude, they are arp299 \\ \hline
+NGC3690A & 172.081 & 58.5371 & 3064 & Exclude, they are arp299 \\ \hline
+NGC3690B & 172.102 & 58.534 & 3064 & Exclude, they are arp299 \\ \hline
+NGC4151half & 182.598 & 39.3804 & 995 & Exclude, NGC4151 dupe see 995 \\ \hline
+*NGC4156 & 182.707 & 39.4728 & 6755 & Keep, unique from NGC4151 \\ \hline
+NGC4258N & 184.733 & 47.3082 & 466 & Exclude, NGC4258 duplicates \\ \hline
+NGC4258NN & 184.731 & 47.3109 & 466 & Exclude, NGC4258 duplicates \\ \hline
+NGC4258NNN & 184.731 & 47.3137 & 466 & Exclude, NGC4258 duplicates \\ \hline
+NGC4922B & 195.316 & 29.3061 & 7056 & Exclude, NGC4922/130125+291849 dupe (see velo in masers) \\ \hline
+NGC520a	 & 21.1437 & 3.79497 & 2266 & Exclude, 520 duplicates \\ \hline
+NGC520b	 & 21.145 & 3.78969 & 2266 & Exclude, 520 duplicates \\ \hline
+NGC520m1 & 21.1451 & 3.78408 & 2266 & Exclude, 520 duplicates \\ \hline
+NGC520m2 & 21.145 & 3.79525 & 2266 & Exclude, 520 duplicates \\ \hline
+NGC520m3 & 21.1395 & 3.78972 & 2266 & Exclude, 520 duplicates \\ \hline
+NGC520m4 & 21.1505 & 3.78975 & 2266 & Exclude, 520 duplicates \\ \hline
+*NGC5256A & 204.587 & 48.242 & 8211 & Keep, unique from NGC5256 \\ \hline
+*notMrk78 & 115.674 & 65.1436 & 11137 & Keep, unique from Mrk78 \\
+  \hline
+\end{tabular}}\\ \\
+
+The marked galaxies* were determined to be unique from the maser list. Those 8 galaxies were kept in the control by removing them from the list of 807 used for filtering. The unmarked galaxies were determined to be maser matches and were left in the filter list. The remaining filter filter list contained 799 objects. It turns out that these 799 represented 120 of the maser detections from the maser list. It was later discovered that the 128 found earlier did include some duplicates, and actually represented 119 maser detections.\\
+
+This inclusion of new items to the filter list may help remove a few maser detections that could have been missed by the previous filter because of coordinates imprecise to some degree between 10" and 6'. Additionally, one new maser detection was completely unaccounted for. As such, it became necessary to filter these 799 results again from the all-surveyed list and then remove all duplicates from that list using slight variations of Codes 3, 1, and 2 in that order. The resulting maser control list, confirmed to have excluded all maser detections and duplicates within 10", contained 3,342 unique galaxies.
+\subsection{Relating Maser Detections and Control to SDSS DR9 Data}\label{control}
+\indent Now that both a maser control sample and a maser detection sample were both available, data analysis could begin. The Sloan Digital Sky Survey (SDSS) has an vast collection of optical spectroscopic and photometric data collected from a 2.5 meter telescope in New Mexico at Apache Point University\cite{sdss}.\\
+
+Not all of the surveyed galaxies are necessarily in the SDSS data releases, and they must be identified by position in order to retrieve their associated data, so the maser detection and maser control lists were crossmatched by a radial position of 10" using Code 3 adjusted to the appropriate data tables within Data Release 9 (DR9) within SDSS. When crossmatched against SpecObjAll, 47 matches were found from the list of 151 maser detections, and 2,181 matches were found from the list of 3,342 maser control galaxies.\\
+
+photometric results...
+
+\section{Results}\label{results}
+
+\section{Conclusions}\label{conclusion}
+
+\begin{thebibliography}{1}
+\bibitem{surv}
+  \emph{MCP All-Surveyed List}.
+  2013. \begin{verbatim}http://www.gb.nrao.edu/~jbraatz/H2O/sum_dir_sort.txt\end{verbatim} 
+  
+\bibitem{navigator}
+  \emph{SDSS Navigator}.
+  2013. \begin{verbatim} http://skyserver.sdss3.org/public/en/tools/chart/navi.asp\end{verbatim} 
+
+\bibitem{sdss}
+  \emph{Sloan Digital Sky Survey}.
+  2013. \begin{verbatim} http://www.sdss.org/\end{verbatim} 
+  
+\end{thebibliography}
+\end{document}
