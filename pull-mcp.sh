@@ -102,7 +102,7 @@ function DownloadReformat {
 			ra[3] = $13
 			column[2] = 15*ra[1] + ra[2]/4 + ra[3]/240
 			dec[1] = $14
-			if ( dec[1] < 0 ){
+			if ( dec[1] < 0 || dec[1] == "-00" ){
 				dec[2] = - $15
 				dec[3] = - $16
 			} else {
@@ -235,7 +235,6 @@ else
 	fi
 
 	if [[ $noaskoutfile != 1 ]]; then
-		echo
 		echo
 		printf "Would you like to output your tables to a file?\n[Y/n]: "
 		read yn
