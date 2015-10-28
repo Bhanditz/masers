@@ -8,7 +8,7 @@ These are my personal files in exactly the condition I had them during my underg
 
 You will find several files with ".t" or ".tt" file extensions. These are essentially ".txt" files that I named differently in order to customize my text editor's syntax recognition. Your best bet would be to look over notes2.tt which provides information about most of the files within this repository. Try searching for file or directory names in that file for more information.
 
-The two new files I created this year are pull-mcp.sh, which is the best way I came up with of creating appropriately formatted local tables of detected masers an all-surveyed, and notes-2015.txt which explains how to filter out detections from all-surveyed using SQL. The script automatically downloads the table from the MCP website.
+The two new files I created this year are pull-mcp.sh, which is the best way I came up with of creating appropriately formatted local tables of detected masers and all-surveyed, and notes-2015.txt which explains how to filter out detections from all-surveyed using SQL. The script automatically downloads the table from the MCP website.
 
 ## Key Topics
 * Data analysis of large data sets; manipulating large tables.
